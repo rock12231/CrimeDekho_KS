@@ -1,4 +1,4 @@
-[![view](https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https://github.com/rock12231/Crime_Busters/edit/master/README.md)](https://hits.seeyoufarm.com)    
+[![view](https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https://github.com/rock12231/CrimeDekho_KS/README.md)](https://hits.seeyoufarm.com)    
 # CrimeDekho : Analytical solution to reduce crime rates
 
 The aim of the CrimeDekho is to create a portal which is useful for the police department with respect to reduce the crime rates. It will help the police department to unlock more potentials by understanding the crime in more better way with the help of analysis done on the FIR data/ Investigation data. It would also help to fight against the crime in the most efficient manner by proper planning of patrolling. 
