@@ -1,0 +1,30 @@
+{
+  "data":
+  [
+        { 
+          "id": 2,
+          "caseno": "JC213529",
+          "Date": "2022-07-16 19:57:02.270239+00:00",
+          "block": "035XX W BARRY AVE",
+          "Type": "नशीले पदार्थों",
+          "Type_desc": "POSS: HEROIN(BRN/TAN)",
+          "Where": "SIDEWALK",
+          "Arrest": "True",
+          "Domestic": "False",
+          "District": 14,
+          "Community_area": 21.0,
+          "Year": 2015,
+          "Latitude": 41.93740577,
+          "Longitude": -87.71664969
+        },
+        {"id": 3, "caseno": "JC213529", "Date": "2022-07-16 19:57:02.278905+00:00", "block": "035XX W BARRY AVE", "Type": "NARCOTICS", "Type_desc": "POSS: HEROIN(BRN/TAN)", "Where": "SIDEWALK", "Arrest": "True", "Domestic": "False", "District": 14, "Community_area": 21.0, "Year": 2015, "Latitude": 41.93740577, "Longitude": -87.71664969},
+        {"id": 4, "caseno": "HY411595", "Date": "2022-07-16 19:57:02.289138+00:00", "block": "0000X N LARAMIE AVE", "Type": "ASSAULT", "Type_desc": "SIMPLE", "Where": "APARTMENT", "Arrest": "False", "Domestic": "True", "District": 15, "Community_area": 25.0, "Year": 2015, "Latitude": 41.88190344, "Longitude": -87.75512115},
+        {"id": 5, "caseno": "HY411610", "Date": "2022-07-16 19:57:02.297434+00:00", "block": "082XX S LOOMIS BLVD", "Type": "BURGLARY", "Type_desc": "FORCIBLE ENTRY", "Where": "RESIDENCE", "Arrest": "False", "Domestic": "False", "District": 6, "Community_area": 71.0, "Year": 2015, "Latitude": 41.74437888, "Longitude": -87.65843064},
+        {"id": 6, "caseno": "HY411435", "Date": "2022-07-16 19:57:02.306369+00:00", "block": "021XX W CHURCHILL ST", "Type": "BURGLARY", "Type_desc": "UNLAWFUL ENTRY", "Where": "RESIDENCE-GARAGE", "Arrest": "False", "Domestic": "False", "District": 14, "Community_area": 24.0, "Year": 2015, "Latitude": 41.9146356, "Longitude": -87.68163091},
+        {"id": 7, "caseno": "HY411629", "Date": "2022-07-16 19:57:02.312353+00:00", "block": "025XX W CERMAK RD", "Type": "नशीले पदार्थों", "Type_desc": "RETAIL नशीले पदार्थों", "Where": "GROCERY FOOD STORE", "Arrest": "True", "Domestic": "False", "District": 10, "Community_area": 31.0, "Year": 2015, "Latitude": 41.85198889, "Longitude": -87.68921912},
+        {"id": 8, "caseno": "HY411605", "Date": "2022-07-16 19:57:02.321330+00:00", "block": "031XX W WASHINGTON BLVD", "Type": "ROBBERY", "Type_desc": "STRONGARM - NO WEAPON", "Where": "STREET", "Arrest": "False", "Domestic": "True", "District": 12, "Community_area": 27.0, "Year": 2015, "Latitude": 41.88281374, "Longitude": -87.70432572},
+        {"id": 10, "caseno": "JC212333", "Date": "2022-07-16 19:57:02.337288+00:00", "block": "071XX S PULASKI RD", "Type": "नशीले पदार्थों", "Type_desc": "$500 AND UNDER", "Where": "PARKING LOT/GARAGE(NON.RESID.)", "Arrest": "False", "Domestic": "False", "District": 8, "Community_area": 65.0, "Year": 2015, "Latitude": 41.76364755, "Longitude": -87.72234469},
+        {"id": 11, "caseno": "HY411662", "Date": "2022-07-16 19:57:02.344267+00:00", "block": "052XX N MILWAUKEE AVE", "Type": "BATTERY", "Type_desc": "SIMPLE", "Where": "SMALL RETAIL STORE", "Arrest": "False", "Domestic": "False", "District": 16, "Community_area": 11.0, "Year": 2015, "Latitude": 41.97596842, "Longitude": -87.76801426},
+        {"id": 12, "caseno": "HY411626", "Date": "2022-07-16 19:57:02.350253+00:00", "block": "0000X W 103RD ST", "Type": "OTHER OFFENSE", "Type_desc": "TELEPHONE THREAT", "Where": "APARTMENT", "Arrest": "False", "Domestic": "True", "District": 5, "Community_area": 49.0, "Year": 2015, "Latitude": 41.70715492, "Longitude": -87.62424499}
+    ]
+}

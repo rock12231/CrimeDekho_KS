@@ -1,0 +1,1 @@
+web: gunicorn CrimeReport.wsgi --log-file -

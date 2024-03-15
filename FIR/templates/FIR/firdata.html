@@ -1,0 +1,75 @@
+{% extends 'CrimeMapping/base.html' %}
+{% load static %}
+{% block title %} Add Crime {% endblock %}
+{% block cssblock %} 
+<!-- Data Table -->
+<link rel="stylesheet" type="text/css" href="{% static 'assets/vendor/datatable/css/jquery.dataTables.css' %}">
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<!-- https://code.jquery.com/jquery-3.5.1.js -->
+<script type="text/javascript" charset="utf8"
+    src="{% static 'assets/vendor/datatable/js/jquery.dataTables.js' %}"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+{% endblock %}
+{% block content %}
+<!-- ======= Header ======= -->
+<main id="main">
+
+    <!-- ======= Breadcrumbs ======= -->
+    <div class="breadcrumbs">
+        <div class="page-header d-flex align-items-center" style="background-image: url('{% static "assets/img/page-header.jpg" %}')">
+            <div class="container position-relative">
+                <div class="row d-flex justify-content-center">
+                    <div class="col-lg-6 text-center">
+                        <h2>FIR Data</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <nav>
+            <div class="container">
+                <ol>
+                    <li><a href="/">Home</a></li>
+                    <li>FIR-Data</li>
+                </ol>
+            </div>
+        </nav>
+    </div>
+    
+    <!-- End Breadcrumbs -->
+
+    <section id="get-a-quote" class="get-a-quote mb-5" style="padding: 20px;">
+        <div class="container" data-aos="fade-up">
+            <div class="row ">
+                {% if request.user.is_staff %}
+                <div class="col-md-6 p-5">
+                    <a href="{% url 'addcrime' %}" class="d-flex flex-column align-items-center"> 
+                        <div style="background-image: url('{% static "assets/img/fir.jpg" %}'); filter: blur(1px); background-size: cover; height: 250px; cursor: pointer; width: 450px;" class="m-auto hvr-grow fs-2 fw-semibold d-flex text-light rounded-5 shadow"></div>    
+                        <div style="margin-top: 100px; position: absolute;" class="h2 fw-semibold text-light text-center">ADD CRIME</div>    
+                    </a>
+                </div>
+                <div class="col-md-6 p-5">
+                    <a href="{% url 'policestations' %}" class="d-flex flex-column align-items-center">
+                        <div style="background-image: url('{% static "assets/img/police.jpg" %}'); filter: blur(1px); background-size: cover; height: 250px; cursor: pointer; width: 450px;" class="m-auto hvr-grow fs-2 fw-semibold d-flex text-light rounded-5 shadow"></div>
+                        <div style="margin-top: 100px; position: absolute;" class="h2 fw-semibold text-light text-center">POLICE STATION</div>
+                    </a>
+                </div>
+                {% else %}
+                <div class="col-md-12 p-5">
+                    <a href="#" class="d-flex flex-column align-items-center">
+                    <div style="background-image: url('{% static "assets/img/police.jpg" %}'); filter: blur(1px); background-size: cover; height: 300px; cursor: pointer; width: 800px;" class="m-auto hvr-grow fs-2 fw-semibold d-flex text-light rounded-5 shadow"></div>
+                    <div style="margin-top: 100px; position: absolute;" class="h2 fw-semibold text-light text-center">You Are Not Athorized To Access This Page</div>
+                    <p class="text-center mt-4">You have to contact to admin for this Page.</p>
+                    </a>
+                </div>
+                {% endif %}
+
+            </div>
+        </div>
+    </section>
+    
+</main>
+<!-- End #main -->
+{% endblock content %}
+{% block jsblock %}
+{% endblock %}

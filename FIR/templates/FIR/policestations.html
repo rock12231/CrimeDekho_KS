@@ -1,0 +1,240 @@
+{% extends 'CrimeMapping/base.html' %}
+{% load static %}
+{% block title %} Police Stations {% endblock %}
+{% block cssblock %}
+<style>
+    .form-control {
+        height: auto !important;
+    }
+</style>
+<!-- Data Table -->
+<link rel="stylesheet" type="text/css" href="{% static 'assets/vendor/datatable/css/jquery.dataTables.css' %}">
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script type="text/javascript" charset="utf8" src="{% static 'assets/vendor/datatable/js/jquery.dataTables.js' %}"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+{% endblock %}
+{% block content %}
+<!-- ======= Header ======= -->
+<main id="main">
+    <!-- ======= Breadcrumbs ======= -->
+    <div class="breadcrumbs">
+        <div class="page-header d-flex align-items-center" style="background-image: 
+        url('{% static "assets/img/crime_reporting.png" %}')">
+            <div class="container position-relative">
+                <div class="row d-flex justify-content-center">
+                    <div class="col-lg-6 text-center">
+                        <h2>Police Stations</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <nav>
+            <div class="container">
+                <ol>
+                    <li><a href="/">Home</a></li>
+                    <li><a href="{% url 'fir' %}">FIR-Data</a></li>
+                    <li>Police Station</li>
+                </ol>
+            </div>
+        </nav>
+    </div><!-- End Breadcrumbs -->
+
+    <!-- ======= Contact Section ======= -->
+    <section id="contact" class="contact p-0 pb-5">
+        <div class="container" data-aos="fade-up">
+            <h3 class="text-center mt-5"
+                style="font-weight: 700; font-size:30px; font-family:var(--font-secondary); color:#001f8d;">
+                Last Police Station Record</h3>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead style="background-color: #d1dde8; color: #001f8d;">
+                        <tr>
+                            <th>Id</th>
+                            <th>Police_Station</th>
+                            <th>Phone_Number</th>
+                            <th>Address</th>
+                            <th>Latitude</th>
+                            <th>Longitude</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th scope="row">{{police_last_record.id}}</th>
+                            <td>{{police_last_record.Police_Station}}</td>
+                            <td>{{police_last_record.Phone_Number}}</td>
+                            <td>{{police_last_record.Address}}</td>
+                            <td>{{police_last_record.Latitude}}</td>
+                            <td>{{police_last_record.Longitude}}</td>
+                        </tr>
+                        <tr>
+                            <td colspan="3" class="text-center">
+                                <!-- Button trigger modal -->
+                                <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                    data-bs-target="#exampleModal">
+                                    Add Police Station
+                                </button>
+                            </td>
+                            <td colspan="4" class="text-center">
+                                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal1">
+                                    Show All Police Station
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section><!-- End Contact Section -->
+
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <form action="" method="post">
+                    {% csrf_token %}
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Police Station Details</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <!-- # district,disname,address,city,zip,website,latitude,longitude -->
+                        <div class="input-group mb-3">
+                            <span class="input-group-text" id="district">District</span>
+                            <input type="text" class="form-control" placeholder="District" aria-label="district"
+                                name="district" aria-describedby="district">
+                        </div>
+                        <div class="input-group mb-3">
+                            <span class="input-group-text" id="disname">Dis Name</span>
+                            <input type="text" class="form-control" placeholder="Disname" aria-label="disname"
+                                name="disname" aria-describedby="disname">
+                        </div>
+                        <div class="input-group mb-3">
+                            <span class="input-group-text" id="address">Address</span>
+                            <input type="text" class="form-control" placeholder="Address" aria-label="address"
+                                name="address" aria-describedby="address">
+                        </div>
+                        <div class="input-group mb-3">
+                            <span class="input-group-text" id="basic-addon1">City</span>
+                            <input type="text" class="form-control" placeholder="City" aria-label="city" name="city"
+                                aria-describedby="city">
+                        </div>
+                        <div class="input-group mb-3">
+                            <span class="input-group-text" id="zip">Zip</span>
+                            <input type="text" class="form-control" placeholder="Zip" aria-label="zip" name="zip"
+                                aria-describedby="zip">
+                        </div>
+                        <div class="input-group mb-3">
+                            <span class="input-group-text" id="website">Website</span>
+                            <input type="text" class="form-control" placeholder="Website" aria-label="website"
+                                name="website" aria-describedby="website">
+                        </div>
+                        <div class="input-group mb-3">
+                            <span class="input-group-text" id="latitude">Latitude</span>
+                            <input type="text" class="form-control" placeholder="Latitude" aria-label="latitude"
+                                name="latitude" aria-describedby="latitude">
+                        </div>
+                        <div class="input-group mb-3">
+                            <span class="input-group-text" id="longitude">Longitude</span>
+                            <input type="text" class="form-control" placeholder="Longitude" aria-label="longitude"
+                                name="longitude" aria-describedby="longitude">
+                        </div>
+                        <div class="input-group mb-3" data-aos="zoom-in">
+                            {{ map | safe }}
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <input type="submit" class="btn btn-primary" value="Save">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="exampleModal1" tabindex="-1" aria-labelledby="exampleModal1Label" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <form action="" method="post">
+                    {% csrf_token %}
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModal1Label">Police Station Details</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="table-responsive">
+                            <table id="example" class="display hover table table-responsive table table-striped">
+                                <thead>
+                                    <!-- Police_Station', 'Phone_Number','Address', 'Latitude', 'Longitude' -->
+                                    <tr>
+                                        <th></th>
+                                        <th>Police_Station</th>
+                                        <th>Phone_Number</th>
+                                        <th>Address</th>
+                                        <th>Latitude</th>
+                                        <th>Longitude</th>
+                                    </tr>
+                                </thead>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</main><!-- End #main -->
+
+{% endblock content %}
+{% block jsblock %}
+<script>
+
+    function format(d) {
+        // `d` is the original data object for the row
+        return (
+            '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">' +
+            '<tr>' + '<td>ID:</td>' + '<td>' + d.id + '</td>' + '</tr>' +
+            '</table>'
+        );
+    }
+
+    $(document).ready(function () {
+    var table = $('#example').DataTable({
+        data: {{ JSONdataPolice | safe}},
+        pageLength: 4,
+        style: 'os',
+        search: {
+        return: true,
+    },
+        columns: [
+        {
+            className: 'dt-control',
+            orderable: false,
+            data: null,
+            defaultContent: '',
+        },
+        //Police_Station', 'Phone_Number','Address', 'Latitude', 'Longitude'
+        { data: 'Police_Station' },
+        { data: 'Phone_Number' },
+        { data: 'Address' },
+        { data: 'Latitude' },
+        { data: 'Longitude' },
+    ],
+        order: [[5, 'desc']]
+    });
+    // Add event listener for opening and closing details
+    $('#example tbody').on('click', 'td.dt-control', function () {
+        var tr = $(this).closest('tr');
+        var row = table.row(tr);
+        if (row.child.isShown()) {
+            row.child.hide();
+            tr.removeClass('shown');
+        } else {
+            row.child(format(row.data())).show();
+            tr.addClass('shown');
+        }
+    });
+});
+</script>
+{% endblock %}

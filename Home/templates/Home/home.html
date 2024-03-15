@@ -1,0 +1,442 @@
+{% extends 'CrimeMapping/base.html' %} 
+{% load static %} 
+{% block title %} Home {% endblock %} 
+{% block cssblock %} {% endblock %} 
+{% block content %}
+<style>
+  iframe{
+    height: 400px !important;
+  }
+</style>
+<!-- ======= Hero Section ======= -->
+<section id="hero" class="hero d-flex align-items-center">
+  <div class="container">
+    <div class="row gy-4 d-flex justify-content-between align-items-center">
+      <div class="col-lg-6 order-2 order-lg-1 d-flex flex-column justify-content-center">
+        <h2 data-aos="fade-up">Making people aware of their surroundings</h2>
+        <p data-aos="fade-up" data-aos-delay="100">
+          Crimedekho helps you understand the extent of rising crimes in your
+          region using crime analysis. Report crimes and let people be aware of
+          the crime rates as we map the data to geographical aspects and make it
+          easy for you to understand the dynamics of crime.
+        </p>
+        <div class="row gy-4">
+          <div class="col-lg-3 col-md-6 service-item d-flex" data-aos="fade-up">
+            <div class="stats-item text-center w-100 h-100">
+              <div class="icon flex-shrink-0">
+                <i class="fa-solid fa-location-dot fa-3x"></i>
+              </div>
+              <span data-purecounter-start="0" data-purecounter-end="{{cards.dataAll}}" data-purecounter-duration="1" class="purecounter pt-4"></span>
+              <p>Number of Crimes</p>
+            </div>
+          </div>
+
+          <div class="col-lg-3 col-md-6 service-item d-flex" data-aos="fade-up">
+            <div class="stats-item text-center w-100 h-100">
+              <div class="icon flex-shrink-0">
+                <i class="fa-solid fa-user-group fa-3x"></i>
+              </div>
+              <span data-purecounter-start="0" data-purecounter-end="{{cards.dataArrest}}" data-purecounter-duration="2" class="purecounter pt-4"></span>
+              <p>Police Stations</p>
+            </div>
+          </div>
+
+          <div class="col-lg-3 col-md-6 service-item d-flex" data-aos="fade-up">
+            <div class="stats-item text-center w-100 h-100">
+              <div class="icon flex-shrink-0">
+                <i class="fa-solid fa-chart-pie fa-3x"></i>
+              </div>
+              <span data-purecounter-start="0" data-purecounter-end="{{cards.dataDomestic}}" data-purecounter-duration="2" class="purecounter pt-4"></span>
+              <p>Max Record "IPC 7"</p>
+            </div>
+          </div>
+
+          <div class="col-lg-3 col-md-6 service-item d-flex" data-aos="fade-up">
+            <div class="stats-item text-center w-100 h-100">
+              <div class="icon flex-shrink-0">
+                <i class="fa-solid fa-user-shield fa-3x"></i>
+              </div>
+                  <span data-purecounter-start="0" data-purecounter-end="{{cards.dataStations}}" data-purecounter-duration="3" class="purecounter pt-4"></span>
+              <p>Most Reported Age</p>
+            </div>
+          </div>
+        </div>
+        <!-- </div> -->
+
+        <!-- <div class="row gy-4" data-aos="fade-up" data-aos-delay="400">
+          <div class="col-lg-3 col-6">
+            <div class="stats-item text-center w-100 h-100">
+              <span data-purecounter-start="0" data-purecounter-end="{{cards.dataAll}}" data-purecounter-duration="1"
+                class="purecounter"></span>
+              <p>Number of Crimes</p>
+            </div>
+          </div>
+      
+
+          <div class="col-lg-3 col-6">
+            <div class="stats-item text-center w-100 h-100">
+              <span data-purecounter-start="0" data-purecounter-end="{{cards.dataArrest}}" data-purecounter-duration="1"
+                class="purecounter"></span>
+              <p>Arrest Record</p>
+            </div>
+          </div>
+     
+
+          <div class="col-lg-3 col-6">
+            <div class="stats-item text-center w-100 h-100">
+              <span data-purecounter-start="0" data-purecounter-end="{{cards.dataDomestic}}"
+                data-purecounter-duration="1" class="purecounter"></span>
+              <p>Domestic Record</p>
+            </div>
+          </div>
+ 
+
+          <div class="col-lg-3 col-6">
+            <div class="stats-item text-center w-100 h-100">
+              <span data-purecounter-start="0" data-purecounter-end="{{cards.dataStations}}"
+                data-purecounter-duration="1" class="purecounter"></span>
+              <p>Police Stations</p>
+            </div>
+          </div>
+ 
+        </div> -->
+      </div>
+
+      <div class="col-lg-5 order-1 order-lg-2 hero-img" data-aos="zoom-out">
+        <p class="text-center"> {% if messages %}
+          <strong class="text-success">Login-</strong>
+                {% for message in messages %}
+                    {{ message }}
+                {% endfor %}
+          {% endif %}
+        </p>
+        <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+        <lottie-player class="img-fluid mb-3 mb-lg-0" alt=""
+          src="https://assets1.lottiefiles.com/packages/lf20_8lqexrip.json" background="transparent" speed="1"
+          style="width: 500px; height: 400px; margin: auto;" loop autoplay></lottie-player>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- End Hero Section -->
+
+<main id="main">
+  <!-- ======= Featured Services Section ======= -->
+
+  <section id="featured-services" class="featured-services">
+    <div class="container">
+      <div class="row gy-4">
+
+        <div class="col-lg-4 col-md-6 service-item d-flex" data-aos="fade-up">
+          <div class="icon flex-shrink-0">
+            <i class="fa-solid fa-user-shield"></i>
+          </div>
+          <div>
+            <h4 class="title">Crime Reporting</h4>
+            <p class="description">
+              Crime reporting helps to get accurate picture of a crime being
+              committed. It makes the operation of nabbing the criminal easier.
+            </p>
+            <a href="{% url 'addcrime' %}" class="readmore stretched-link"><span>Learn More</span><i
+                class="bi bi-arrow-right"></i></a>
+          </div>
+        </div>
+        <!-- End Service Item -->
+
+        <div class="col-lg-4 col-md-6 service-item d-flex" data-aos="fade-up" data-aos-delay="100">
+          <div class="icon flex-shrink-0">
+            <i class="fa-solid fa-map-location-dot"></i>
+          </div>
+          <div>
+            <h4 class="title">Crime Mapping</h4>
+            <p class="description">
+              Crime mapping is a technique used to map, visualize, and analyze
+              crime incident patterns. It is a key component of crime analysis
+              and the policing strategy.
+            </p>
+            <a href="{% url 'crimemapping' %}" class="readmore stretched-link"><span>Learn More</span><i
+                class="bi bi-arrow-right"></i></a>
+          </div>
+        </div>
+        <!-- End Service Item -->
+
+        <div class="col-lg-4 col-md-6 service-item d-flex" data-aos="fade-up" data-aos-delay="200">
+          <div class="icon flex-shrink-0">
+            <i class="fa-solid fa-chart-simple"></i>
+          </div>
+          <div>
+            <h4 class="title">Crime Analysis</h4>
+            <p class="description">
+              Crime analysis is a function that involves systematic analysis for
+              identifying and analyzing patterns and trends in crime and
+              disorder.
+            </p>
+            <a href="{% url 'crimemapping' %}" class="readmore stretched-link"><span>Learn More</span><i
+                class="bi bi-arrow-right"></i></a>
+          </div>
+        </div>
+        <!-- End Service Item -->
+
+      </div>
+    </div>
+  </section>
+  <!-- End Featured Services Section -->
+
+  <!-- ======= About Us Section ======= -->
+  <section id="about" class="about">
+    <div class="container" data-aos="fade-up">
+      <div class="row gy-4">
+        <div class="col-lg-5 position-relative align-self-start order-lg-last order-first" data-aos="fade-left">
+          <!-- <img src="{% static 'assets/img/about.png' %}"  class="img-fluid" alt="" /> -->
+          {{map|safe}}
+        </div>
+        <div class="col-lg-7 content order-last order-lg-first" data-aos="fade-right">
+          <h3>About Us</h3>
+          <p>
+            We are on a mission to help the law and people identify the crime
+            and eradicate it. We thrive to make this world a better place to
+            live. With the power of analytics show the patterns/trends so that
+            crime doesn't hide in the dark. To bring the crimes happening to
+            light and make people aware of their neighbourhoods.
+          </p>
+          <ul>
+            <li data-aos="fade-up" data-aos-delay="100">
+              <i class="bi bi-eye"></i>
+              <div>
+                <h5>Be a third eye to the society</h5>
+                <p>
+                  Report the crimes that occur and let us collect the data so we
+                  can provide better insights.
+                </p>
+              </div>
+            </li>
+            <li data-aos="fade-up" data-aos-delay="200">
+              <i class="bi bi-map"></i>
+              <div>
+                <h5>Explore the crime patterns</h5>
+                <p>
+                  See how different regions stack up by mapping the region by
+                  crime types and crime rates
+                </p>
+              </div>
+            </li>
+            <li data-aos="fade-up" data-aos-delay="300">
+              <i class="bi bi-graph-up"></i>
+              <div>
+                <h5>Analyse the trends in crime</h5>
+                <p>
+                  After mapping the crime try out different analytic tools and
+                  understand the trends in criminal activities.
+                </p>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- End About Us Section -->
+
+  <!-- ======= Features Section ======= -->
+  <section id="features" class="features">
+    <div class="container">
+      <div class="row gy-4 align-items-center features-item" data-aos="fade-up">
+        <div class="col-lg-6 position-relative align-self-start order-lg-first order-first" data-aos="fade-right">
+          <!-- <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+          <lottie-player class="img-fluid" alt="" src="https://assets5.lottiefiles.com/packages/lf20_22mjkcbb.json"
+            background="transparent" speed="1" style="width: 500px; height: 500px" loop autoplay></lottie-player> -->
+          <img src="{% static 'assets/img/police.png' %}" width="90%" class="mx-auto d-block" alt=""/>
+        </div>
+        <div class="col-lg-6" data-aos="fade-left">
+          <h3>Crime Reporting - Help us to keep track of crime data</h3>
+          <p class="fst-italic">
+            Give details about the crime by entering the data in add-crime
+            section
+          </p>
+          <ul>
+            <li data-aos="fade-up" data-aos-delay="100">
+              <i class="bi bi-check"></i> Enter the identification details such
+              as case number and crime place.
+            </li>
+            <li data-aos="fade-up" data-aos-delay="200">
+              <i class="bi bi-check"></i> Give description about the crime.
+            </li>
+            <li data-aos="fade-up" data-aos-delay="300">
+              <i class="bi bi-check"></i> Mention longitude & lattitude of the
+              region to locate it.
+            </li>
+          </ul>
+        </div>
+      </div>
+      <!-- Features Item -->
+
+      <div class="row gy-4 align-items-center features-item" data-aos="fade-up">
+        <div class="col-md-6 align-self-start order-1 order-md-2" data-aos="fade-left">
+          <!-- <div class="tenor-gif-embed" data-postid="26153506" data-width="100%"></div>
+          <script type="text/javascript" async src="https://tenor.com/embed.js"></script> -->
+          <img src="{% static 'assets/img/crime_mapping.gif' %}" width="90%" class="mx-auto d-block" alt=""/>
+        </div>
+        <div class="col-md-6 order-2 order-md-1" data-aos="fade-right">
+          <h3>Crime Mapping - Breaking the dynamics of crime</h3>
+          <p class="fst-italic">
+            The mapping of crime happens according to the region of crime and
+            it's features.
+          </p>
+          <ul>
+            <li data-aos="fade-up" data-aos-delay="100">
+              <i class="bi bi-check"></i> Map the crime with respect to regions.
+            </li>
+            <li data-aos="fade-up" data-aos-delay="200">
+              <i class="bi bi-check"></i> Locate the crime zones using
+              geospatial method.
+            </li>
+            <li data-aos="fade-up" data-aos-delay="300">
+              <i class="bi bi-check"></i> Specific mapping available for the
+              users.
+            </li>
+          </ul>
+        </div>
+      </div>
+      <!-- Features Item -->
+
+      <div class="row gy-4 align-items-center features-item" data-aos="fade-up">
+        <div class="col-md-6" data-aos="fade-right">
+          <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+          <lottie-player class="img-fluid" alt="" src="https://assets9.lottiefiles.com/packages/lf20_49rdyysj.json"
+            background="transparent" speed="1" style="width: 400px; height: 400px; margin:auto;" loop autoplay></lottie-player>
+        </div>
+        <div class="col-md-6" data-aos="fade-left">
+          <h3>Crime Analysis - Extract trends/patterns from the data</h3>
+          <p>
+            Analyse the patterns and trends arising from the crime reports to
+            make decisions.
+          </p>
+          <ul>
+            <li data-aos="fade-up" data-aos-delay="100">
+              <i class="bi bi-check"></i> User can see analysis by visiting the
+              dashboard.
+            </li>
+            <li data-aos="fade-up" data-aos-delay="200">
+              <i class="bi bi-check"></i> Different visulizations can be applied
+              to the data.
+            </li>
+            <li data-aos="fade-up" data-aos-delay="300">
+              <i class="bi bi-check"></i> Helps extract trends from the crime
+              data.
+            </li>
+          </ul>
+        </div>
+      </div>
+      <!-- Features Item -->
+    </div>
+  </section>
+  <!-- End Features Section -->
+
+  <!-- ======= Frequently Asked Questions Section ======= -->
+  <section id="faq" class="faq">
+    <div class="container" data-aos="fade-up">
+      <div class="section-header">
+        <span>Frequently Asked Questions</span>
+        <h2>Frequently Asked Questions</h2>
+      </div>
+
+      <div class="row justify-content-center" data-aos="fade-up" data-aos-delay="200">
+        <div class="col-lg-10">
+          <div class="accordion accordion-flush" id="faqlist">
+            <div class="accordion-item" data-aos="zoom-in">
+              <h3 class="accordion-header">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                  data-bs-target="#faq-content-1">
+                  <i class="bi bi-question-circle question-icon"></i>
+                  What is the motive of crime dekho?
+                </button>
+              </h3>
+              <div id="faq-content-1" class="accordion-collapse collapse" data-bs-parent="#faqlist">
+                <div class="accordion-body">
+                  Crimedekho is an online crime monitoring and analysis website
+                  that allows people to check crimes around their area.
+                </div>
+              </div>
+            </div>
+            <!-- # Faq item-->
+
+            <div class="accordion-item" data-aos="zoom-in">
+              <h3 class="accordion-header">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                  data-bs-target="#faq-content-2">
+                  <i class="bi bi-question-circle question-icon"></i>
+                  Is crimedekho services also available in hindi language?
+                </button>
+              </h3>
+              <div id="faq-content-2" class="accordion-collapse collapse" data-bs-parent="#faqlist">
+                <div class="accordion-body">
+                  Yes we do have a hindi option. We offer features such as crime
+                  reporting, crime analysis and mapping of the crime data.
+                </div>
+              </div>
+            </div>
+            <!-- # Faq item-->
+
+            <div class="accordion-item" data-aos="zoom-in">
+              <h3 class="accordion-header">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                  data-bs-target="#faq-content-3">
+                  <i class="bi bi-question-circle question-icon"></i>
+                  How to record crime report in the website?
+                </button>
+              </h3>
+              <div id="faq-content-3" class="accordion-collapse collapse" data-bs-parent="#faqlist">
+                <div class="accordion-body">
+                  Navigate to the add-crime section and then enter the details
+                  such as case id , region , type , etc.
+                </div>
+              </div>
+            </div>
+            <!-- # Faq item-->
+
+            <div class="accordion-item" data-aos="zoom-in">
+              <h3 class="accordion-header">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                  data-bs-target="#faq-content-4">
+                  <i class="bi bi-question-circle question-icon"></i>
+                  Where can i see the analysis of my report?
+                </button>
+              </h3>
+              <div id="faq-content-4" class="accordion-collapse collapse" data-bs-parent="#faqlist">
+                <div class="accordion-body">
+                  <i class="bi bi-question-circle question-icon"></i>
+                  You can navigate to the crime-mapping section and select graph
+                  to display the analysis of your data.
+                </div>
+              </div>
+            </div>
+            <!-- # Faq item-->
+
+            <div class="accordion-item" data-aos="zoom-in">
+              <h3 class="accordion-header">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                  data-bs-target="#faq-content-5">
+                  <i class="bi bi-question-circle question-icon"></i>
+                  Do i have to enter all the data fields in add-crime?
+                </button>
+              </h3>
+              <div id="faq-content-5" class="accordion-collapse collapse" data-bs-parent="#faqlist">
+                <div class="accordion-body">
+                  No , since we use nosql you can enter as much information you
+                  have. There will be no problem mapping it.
+                </div>
+              </div>
+            </div>
+            <!-- # Faq item-->
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- End Frequently Asked Questions Section -->
+</main>
+<!-- End #main -->
+
+{% endblock content %}
+
+{% block jsblock %} {% endblock %}

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test</title>
+    <!-- Inside the head tag of your HTML template -->
+
+  
+    <style>
+        body {
+          font-family: Arial, sans-serif;
+          padding: 50px;
+        }
+   
+    </style>
+
+</head>
+
+<body>
+
+    <br>
+    <br>
+   
+
+    <h1>IMG to text Viewer</h1>
+
+    <!-- Form to upload a PDF file -->
+    <form method="post" enctype="multipart/form-data" action="{% url 'test' %}">
+        {% csrf_token %}
+        <input type="file" name="image" accept="image/*" required>
+        <button type="submit">Select Image</button>
+    </form>
+
+    <!-- Display PDF using the 'embed' tag -->
+    {% if text %}
+        <div style="border: solid black 2px;" width="800px"  height="400px">{{ text }}</div>
+    {% endif %}
+
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>    
+    
+    <h2 class="text-center">Test</h2>
+    <div style="width: 800px;">
+        {{ map | safe }}
+    </div>
+
+</body>
+</html>

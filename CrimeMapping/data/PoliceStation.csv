@@ -1,0 +1,23 @@
+district,disname,address,city,zip,website,latitude,longitude
+1,Near North,1160 N Larrabee St,Chicago,60610,http://home.chicagopolice.org/community/districts/18th-district-near-north/,41.90324165,-87.64335214
+2,Town Hall,850 W Addison St,Chicago,60613,http://home.chicagopolice.org/community/districts/19th-district-town-hall/,41.94740046,-87.65151202
+3,Lincoln,5400 N Lincoln Ave,Chicago,60625,http://home.chicagopolice.org/community/districts/20th-district-lincoln/,41.97954951,-87.69284451
+4,Morgan Park,1900 W Monterey Ave,Chicago,60643,http://home.chicagopolice.org/community/districts/22nd-district-morgan-park/,41.69143478,-87.66852039
+5,Rogers Park,6464 N Clark St,Chicago,60626,http://home.chicagopolice.org/community/districts/24th-district-rogers-park/,41.99976348,-87.67132429
+6,Grand Central,5555 W Grand Ave,Chicago,60639,http://home.chicagopolice.org/community/districts/25th-district-grand-central/,41.91860889,-87.76557448
+7,Central,1718 S State St,Chicago,60616,http://home.chicagopolice.org/community/districts/1st-district-central/,41.85837259,-87.62735617
+8,Wentworth,5101 S Wentworth Ave,Chicago,60609,http://home.chicagopolice.org/community/districts/2nd-district-wentworth/,41.80181109,-87.63056018
+9,Grand Crossing,7040 S Cottage Grove Ave,Chicago,60637,http://home.chicagopolice.org/community/districts/3rd-district-grand-crossing/,41.76643089,-87.60574786
+10,South Chicago,2255 E 103rd St,Chicago,60617,http://home.chicagopolice.org/community/districts/4th-district-south-chicago/,41.70793329,-87.56834912
+11,Calumet,727 E 111th St,Chicago,60628,http://home.chicagopolice.org/community/districts/5th-district-calumet/,41.69272336,-87.60450587
+12,Gresham,7808 S Halsted St,Chicago,60620,http://home.chicagopolice.org/community/districts/6th-district-gresham/,41.75213684,-87.64422891
+14,Englewood,1438 W 63rd St,Chicago,60636,http://home.chicagopolice.org/community/districts/7th-district-englewood/,41.77963154,-87.66088702
+15,Chicago Lawn,3420 W 63rd St,Chicago,60629,http://home.chicagopolice.org/community/districts/8th-district-chicago-lawn/,41.77898719,-87.70886382
+16,Deering,3120 S Halsted St,Chicago,60608,http://home.chicagopolice.org/community/districts/9th-district-deering/,41.83739443,-87.64640771
+17,Ogden,3315 W Ogden Ave,Chicago,60623,http://home.chicagopolice.org/community/districts/10th-district-ogden/,41.85668453,-87.70838196
+18,Harrison,3151 W Harrison St,Chicago,60612,http://home.chicagopolice.org/community/districts/11th-district-harrison/,41.87358229,-87.70548813
+19,Near West,"1412 S Blue Island Ave",Chicago,60608,http://home.chicagopolice.org/community/districts/12th-district-near-west/,41.86297662,-87.65697251
+20,Shakespeare,2150 N California Ave,Chicago,60647,http://home.chicagopolice.org/community/districts/14th-district-shakespeare/,41.92110332,-87.69745182
+22,Austin,5701 W Madison St,Chicago,60644,http://home.chicagopolice.org/community/districts/15th-district-austin/,41.88008346,-87.76819989
+24,Jefferson Park,5151 N Milwaukee Ave,Chicago,60630,http://home.chicagopolice.org/community/districts/16th-district-jefferson-park/,41.97409445,-87.76614884
+25,Albany Park,4650 N Pulaski Rd,Chicago,60630,http://home.chicagopolice.org/community/districts/17th-district-albany-park/,41.96605342,-87.72811456

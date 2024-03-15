@@ -1,0 +1,308 @@
+{% extends 'CrimeMapping/base.html' %}
+{% load static %}
+{% block title %} Crime Analysis {% endblock %}
+{% block cssblock %}
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+<style>
+    #select:focus {
+        border-color: #ff80ff;
+        box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.075) inset, 0px 0px 8px rgba(255, 100, 255, 0.5);
+    }
+
+    .toolbar {
+        float: left;
+    }
+
+    .cust-btn {
+        position: absolute;
+        margin-left: 40%;
+        margin-top: 10px;
+        z-index: 1;
+        color: black;
+        background: white;
+        border: 1px solid;
+    }
+
+    .cust-btn:hover {
+        position: absolute;
+        margin-left: 40%;
+        margin-top: 10px;
+        z-index: 1;
+        color: black;
+        background: #f4f4f4;
+        border: 1px solid;
+    }
+
+    .cust-btn:focus {
+        position: absolute;
+        margin-left: 40%;
+        margin-top: 10px;
+        z-index: 1;
+        color: black;
+        background: #f4f4f4;
+        border: 1px solid;
+    }
+</style>
+<!-- Data Table -->
+<link rel="stylesheet" type="text/css" href="{% static 'assets/vendor/datatable/css/jquery.dataTables.css' %}">
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<!-- https://code.jquery.com/jquery-3.5.1.js -->
+<script type="text/javascript" charset="utf8"
+    src="{% static 'assets/vendor/datatable/js/jquery.dataTables.js' %}"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+<!-- Multi Select -->
+<link href="{% static 'assets/vendor/select2/css/select2.min.css' %}" rel="stylesheet" />
+<script src="{% static 'assets/vendor/select2//js/select2.min.js' %}"></script>
+{% endblock %}
+{% block content %}
+<!-- ======= Header ======= -->
+<main id="main">
+
+    <!-- ======= Breadcrumbs ======= -->
+    <div class="breadcrumbs">
+        <div class="page-header d-flex align-items-center" style="background-image: url(' {% static "assets/img/crime_analysis.png" %}') ;">
+            <div class="container position-relative">
+                <div class="row d-flex justify-content-center">
+                    <div class="col-lg-6 text-center">
+                        <h2>Crime Analysis</h2>
+                        <!-- <p>Crimedekho helps you understand the extent of rising crimes in your region using crimeanalysis. 
+                            Report crimes and let people be aware of the crime rates as we map the data to geographical aspects
+                            and make it easy for you to understand the dynamics of crime.
+                        </p> -->
+                        <p>Crime analysis utilizes Generative AI and Statistics to analyze crime data, 
+                            providing visual insights for a clearer understanding of criminal activity.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <nav>
+            <div class="container">
+                <ol>
+                    <li><a href="/">Home</a></li>
+                    <li>Crime Analytics</li>
+                </ol>
+            </div>
+        </nav>
+    </div>
+
+
+    <!-- End Breadcrumbs -->
+
+    <!-- =======  Analysis Section ======= -->
+
+    <section style="padding: 5px;" id="get-a-quote" class="get-a-quote mb-5">
+        <div class="container" data-aos="fade-up">
+            <div class="row g-0">
+                <div class="d-flex gy-4 row justify-content-center text-center m-auto col-md-9 ">
+                    <form action="{% url 'crimeanalysis' %}" method="POST" id="queryForm">
+                        <div class="form-group h2 my-5">
+                            {% csrf_token %}
+                            <label for="exampleFormControlTextarea1" class="h5 font-bold">Enter your query, which is not listed above: </label>
+                            <input style="text-align: center;" type="text" placeholder="Please type your query here" class="form-control form-control-lg my-3 py-3 border border-primary border-bottom-0 rounded" name="query" value="{{query}}" required>
+                            <div class="{% if result1 %} h6 {% else %} h4 {% endif %} my-4 py-3 border border-primary border-top-0 rounded">
+                                {% if result1 %} {{result1.answer}} {% else %} Your Answer show here ... {% endif %}
+                            </div>
+                            <div class="text-center my-5">
+                                <input class="btn btn-outline-primary font-weight-bold" type="submit" value="Solve Query">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section style="padding: 5px;" id="get-a-quote" class="get-a-quote mb-5">
+        <div class="container" data-aos="fade-up">
+            <div class="row g-0">
+                <hr>
+                <div class="col-lg-12 mt-4">
+                    <div class="input-group input-group">
+                        <div class="input-group-prepend">
+                            <label class="input-group-text rounded-0" for="inputGroupSelect01">Please Select
+                                Option</label>
+                        </div>
+                        <select id="select" class="form-select form-select-sm" aria-label=".form-select-sm example" onchange="selectFun();">
+                            <option selected>All Crime Data</option>
+                            {% comment %} <option value="1">Most Type of crime recorded</option>
+                            <option value="2">Location with most number of crimes are recorded</option>
+                            <option value="3">Type of crime in which most number of arrest is done</option>
+                            <option value="4">On which of day of week, the more crime is recorded</option>
+                            <option value="5">In which month, most no. of crime is recorded</option> {% endcomment %}
+                            {% for q in questions %}
+                            <option value="{{forloop.counter}}">{{q.title}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <div class="col-lg-12 mb-4" data-aos="fade-up" id="chartdiv">
+                    <canvas id="myChart" height="100px"></canvas>
+                </div>
+
+                <hr>
+
+                <div class="col-lg-12 mt-2">
+                    <div class="table-responsive">
+                        <table id="exampleone" class="display" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th>Action</th>
+                                    <th>case_no</th>
+                                    <th>date</th>
+                                    <th>police_station</th>
+                                    <th>ipc</th>
+                                    <th>ipc_no</th>
+                                    <th>time</th>
+                                    <th>CrPC</th>
+                                    <th>date_happened</th>
+                                    <th>date_reported</th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+</main><!-- End #main -->
+<script>
+
+    function selectFun() {
+        var select = document.getElementById("select");
+        var selectValue = select.value;
+        console.log(select, "selectValue");
+        {% for q in questions %}
+        if (selectValue == "{{forloop.counter}}") {
+            myChart.data.labels = {{ q.dataY | safe }};
+        myChart.data.datasets[0].data = {{ q.dataX | safe }};
+    myChart.update();
+          }
+    {% endfor %}
+  }
+
+    //Bar myChart Data
+    const data = {
+        labels: {{ dataY | safe }} ,
+    datasets: [{
+        label: 'Crime Analysis {{ crime.startendDates|default:"2022-2023" }} ',
+        data: {{ dataX | safe }},
+        backgroundColor: [
+        'rgb(255, 99, 132)',
+        'rgb(255, 159, 64)',
+        'rgb(255, 205, 86)',
+        'rgb(75, 192, 192)',
+        'rgb(54, 162, 235)',
+        'rgb(153, 102, 255)'
+    ],
+        backgroundColor: [
+        'rgba(255, 99, 132, 0.8)',
+        'rgba(255, 159, 64, 0.8)',
+        'rgba(255, 205, 86, 0.8)',
+        'rgba(75, 192, 192, 0.8)',
+        'rgba(54, 162, 235, 0.8)',
+        'rgba(153, 102, 255, 0.8)',
+    ],
+        borderWidth: 1
+          }]
+      };
+
+    const config = {
+        type: 'bar',
+        data: data,
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        },
+    };
+
+    const myChart = new Chart(
+        document.getElementById('myChart'),
+        config
+    );
+
+</script>
+<script>
+    /* Formatting function for row details - modify as you need */
+    //'case_no', 'date', 'police_station', 'ipc', 'ipc_no', 'time', 'CrPC', 'date_happened', 'date_reported', 'format_fir_type', 'address',
+      //              'distance_police_station', 'name', 'father_name', 'age', 'nationality', 'office_address', 'additional_info', 'suspected_individual', 
+        //            'latitude', 'longitude', 'file', 'language'
+    function format(d) {
+        // `d` is the original data object for the row
+        return (
+            '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">' +
+            '<tr>' + '<td>format_fir_type:</td>' + '<td>' + d.format_fir_type + '</td>' + '</tr>' +
+            '<tr>' + '<td>address:</td>' + '<td>' + d.address + '</td>' + '</tr>' +
+            '<tr>' + '<td>distance_police_station:</td>' + '<td>' + d.distance_police_station + '</td>' + '</tr>' +
+            '<tr>' + '<td>name:</td>' + '<td>' + d.name + '</td>' + '</tr>' +
+            '<tr>' + '<td>father_name:</td>' + '<td>' + d.father_name + '</td>' + '</tr>' +
+            '<tr>' + '<td>age:</td>' + '<td>' + d.age + '</td>' + '</tr>' +
+            '<tr>' + '<td>nationality:</td>' + '<td>' + d.nationality + '</td>' + '</tr>' +
+            '<tr>' + '<td>office_address:</td>' + '<td>' + d.office_address + '</td>' + '</tr>' +
+            '<tr>' + '<td>additional_info:</td>' + '<td>' + d.additional_info + '</td>' + '</tr>' +
+            '<tr>' + '<td>suspected_individual:</td>' + '<td>' + d.suspected_individual + '</td>' + '</tr>' +
+            '<tr>' + '<td>latitude:</td>' + '<td>' + d.latitude + '</td>' + '</tr>' +
+            '<tr>' + '<td>longitude:</td>' + '<td>' + d.longitude + '</td>' + '</tr>' +
+            '<tr>' + '<td>language:</td>' + '<td>' + d.language + '</td>' + '</tr>' +
+            '<tr>' + '<td>file:</td>' + '<td> <a href="'+ d.file + '">File Link</td>' + '</tr>' +
+            '</table>'
+        );
+    }
+
+    $(document).ready(function () {
+        var table = $('#exampleone').DataTable({
+            pageLength: 5,
+            style: 'os',
+            search: {
+                return: true,
+            },
+            dom: '<"toolbar">frtip',
+            data: {{ JSONdata | safe}},
+        columns: [
+        {
+            className: 'dt-control',
+            orderable: false,
+            data: null,
+            defaultContent: '',
+        },
+        { data: 'case_no' },
+        { data: 'date' },
+        { data: 'police_station' },
+        { data: 'ipc' },
+        { data: 'ipc_no' },
+        { data: 'time' },
+        { data: 'CrPC' },
+        { data: 'date_happened' },
+        { data: 'date_reported' },
+    ],
+        order: [[1, 'asc']],
+          });
+    // Add event listener for opening and closing details
+    $('#exampleone tbody').on('click', 'td.dt-control', function () {
+        var tr = $(this).closest('tr');
+        var row = table.row(tr);
+
+        if (row.child.isShown()) {
+            // This row is already open - close it
+            row.child.hide();
+            tr.removeClass('shown');
+        } else {
+            // Open this row
+            row.child(format(row.data())).show();
+            tr.addClass('shown');
+        }
+    });
+    $("div.toolbar").html('<b>Crime Analysis {{ crime.startendDates|default:"2022-2023" }}</b>');
+      });
+</script>
+
+{% endblock content %}
+{% block jsblock %} {% endblock %}

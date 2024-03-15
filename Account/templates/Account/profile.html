@@ -1,0 +1,145 @@
+{% extends 'CrimeMapping/base.html' %} 
+{% load static %} 
+{% block title %} Home {% endblock %} 
+{% block cssblock %} {% endblock %} 
+{% block content %}
+<!-- ======= Hero Section ======= -->
+<style>
+.hero form {
+    background: none !important;
+    padding: 10px;
+    border-radius: 10px;
+}
+.hero form input{
+    border-radius: 5px;
+    border: 1px;
+}
+tr td{
+    padding: 10px;
+}
+tr th{
+    padding: 10px;
+}
+</style>
+<section id="hero" class="hero d-flex align-items-center">
+  <div class="container">
+    <div class="row gy-4 d-flex justify-content-between align-items-center">
+    {% if request.user.is_superuser and request.user.is_staff %}
+    <div class="col-lg-12 order-2 order-lg-1 d-flex flex-column justify-content-center">
+        <h2 data-aos="fade-up">Welcome To Admin <span class="text-warning"> {{request.user.username | title}}</span></h2>
+        <p data-aos="fade-up" data-aos-delay="100">
+          You can give permission to user here, Role type : Superuser. 
+            {% if messages %}
+            <strong class="text-success">Updated-</strong>
+                  {% for message in messages %}
+                      {{ message }}
+                  {% endfor %}
+            {% endif %}
+        </p>
+        <div class="row gy-4" data-aos="zoom-in" data-aos-delay="300">
+            <table>
+                <tr>
+                    <th>Id</th>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>Last Login</th>
+                    <th class="text-center">Staff</th>
+                    <th class="text-center">Active</th>
+                    <th>Action</th>
+                </tr>
+                {% for u in users %}
+                <form method="POST" action="{% url 'profile' %}">
+                {% csrf_token %}
+                    <tr>
+                        <td>
+                            {{u.id}}
+                            <input type="text" name="user_id" value="{{u.id}}" hidden>
+                        </td>
+                        <td>
+                            {{u.username}}
+                        </td>
+                        <td>
+                            {{u.email}}
+                        </td>
+                        <td>
+                            {{u.last_login|date:"D M H:i:s" }}
+                        </td>
+                        <td>
+                            <input type="checkbox" name="staff" class="pl-4 p-2 w-100" {% if u.is_staff %} checked {% endif %}>
+                        </td>
+                        <td>
+                            <input type="checkbox" name="active" class="pl-4 p-2 w-100" {% if u.is_active %} checked {% endif %}>
+                        </td>
+                        <td>
+                            <button type="submit" class="btn btn-lg btn-success btn-sm rounded-pill p-2 fw-semibold w-50"><i class="fa-solid fa-edit"></i> Update</button>
+                        </td>
+                    </tr>
+                </form>
+                {% endfor %}
+            </table>
+        </div>
+        </form>
+    </div>
+
+    {% elif not request.user.is_superuser  %}
+      <div class="col-lg-12 order-2 order-lg-1 d-flex flex-column justify-content-center">
+        <h2 data-aos="fade-up">Welcome To Profile <span class="text-warning"> {{request.user.username | title}}</span></h2>
+        <p data-aos="fade-up" data-aos-delay="100">
+          You can update your profile here.  
+          {% if messages %}
+            <strong class="text-success">Updated-</strong>
+              {% for message in messages %}
+                {{ message }}
+              {% endfor %}
+          {% endif %}
+        </p>
+        <form action="{% url 'profile' %}" method="POST" role="form" class="php-email-form"  enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="row gy-4">
+          <div class="col-lg-4 col-md-4 service-item d-flex" data-aos="fade-up">
+            <div class="stats-item text-center w-100 h-100">
+                <input type="text" name="first_name" class="pl-4 p-2 w-100" placeholder="First Name" value="{{user.first_name}}" required>
+            </div>
+          </div>
+          <div class="col-lg-4 col-md-4 service-item d-flex" data-aos="fade-up">
+            <div class="stats-item text-center w-100 h-100">
+                <input type="text" name="last_name" class="pl-4 p-2 w-100" placeholder="Last Name" value="{{user.last_name}}" required>
+            </div>
+          </div>
+          <div class="col-lg-4 col-md-4 service-item d-flex" data-aos="fade-up">
+            <div class="stats-item text-center w-100 h-100">
+                <span>{{request.user.email}}</span>
+            </div>
+          </div>
+          <div class="col-lg-4 col-md-4 service-item d-flex" data-aos="fade-up">
+            <div class="stats-item text-center w-100 h-100">
+              <span>Role : {% if request.user.is_staff %} Saff {% else %} User{% endif %}</span>
+            </div>
+          </div>
+          <div class="col-lg-4 col-md-4 service-item d-flex" data-aos="fade-up">
+            <div class="stats-item text-center w-100 h-100">
+                <span>Join : {{request.user.date_joined}}</span>
+            </div>
+          </div>
+          <div class="col-lg-4 col-md-4 service-item d-flex" data-aos="fade-up">
+            <div class="stats-item text-center w-100 h-100">
+                <span>Last login : {{request.user.last_login}}</span>
+            </div>
+          </div>
+          <div class="col-lg-12 col-md-12 service-item d-flex justify-content-center" data-aos="fade-up">
+            <div class="stats-item text-center w-50 h-100">
+                <button type="submit" class="btn btn-lg btn-primary rounded-pill p-2 fw-semibold w-50"> Update</button>
+            </div>
+          </div>
+        </div>
+        </form>
+       
+      </div>
+    {% endif %}
+    </div>
+  </div>
+</section>
+
+  {% endblock content %}
+
+{% block jsblock %} {% endblock %}

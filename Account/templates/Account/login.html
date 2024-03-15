@@ -1,0 +1,73 @@
+{% extends 'CrimeMapping/base.html' %} 
+{% load static %} 
+{% block title %} Home {% endblock %} 
+{% block cssblock %} {% endblock %} 
+{% block content %}
+<!-- ======= Hero Section ======= -->
+<style>
+.hero form {
+    background: none !important;
+    padding: 10px;
+    border-radius: 10px;
+}
+.hero form input{
+    border-radius: 5px;
+    border: 1px;
+}
+</style>
+<section id="hero" class="hero d-flex align-items-center">
+  <div class="container">
+    <div class="row gy-4 d-flex justify-content-between align-items-center">
+      <div class="col-lg-6 order-2 order-lg-1 d-flex flex-column justify-content-center">
+        <h2 data-aos="fade-up">Login Here ...</h2>
+        <p data-aos="fade-up" data-aos-delay="100">
+          You can login here to access the crime data of your city.
+          You nned USERNAME PASSWORD & CODE to login.
+        </p>
+        <form action="{% url 'login' %}" method="POST" role="form" class="php-email-form">
+            {% csrf_token %}
+        <div class="row">
+          <div class="col-lg-12 col-md-12 service-item" style="height: 55px;" data-aos="fade-up">
+            {% if messages %}
+              <div class="alert alert-warning alert-dismissible text-danger fade show" role="alert">
+                  <strong>Warning!!! </strong>
+                  {% for message in messages %}
+                      {{ message }}
+                  {% endfor %}
+                  <button type="button" class="btn-close mt-0" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
+            {% endif %}
+          </div>
+          <div class="col-lg-6 col-md-6 service-item d-flex" data-aos="fade-up">
+            <div class="stats-item text-center w-100 h-100">
+                <input type="name" name="username" class="pl-4 p-2 w-100" placeholder="Username" required>
+            </div>
+          </div>
+          <div class="col-lg-6 col-md-6 service-item d-flex" data-aos="fade-up">
+            <div class="stats-item text-center w-100 h-100">
+                <input type="password" name="password" class="pl-4 p-2 w-100" placeholder="Password" required>
+            </div>
+          </div>
+          <div class="col-lg-12 col-md-12 service-item d-flex justify-content-center" data-aos="fade-up">
+            <div class="stats-item text-center w-50 h-100">
+                <button type="submit" class="btn btn-lg btn-primary rounded-pill p-2 fw-semibold w-100">Login</button>
+            </div>
+          </div>
+        </div>
+        </form>
+       
+      </div>
+
+      <div class="col-lg-5 order-1 order-lg-2 hero-img" data-aos="zoom-out">
+        <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+        <lottie-player class="img-fluid mb-3 mb-lg-0" alt=""
+          src="https://assets1.lottiefiles.com/packages/lf20_8lqexrip.json" background="transparent" speed="1"
+          style="width: 500px; height: 400px; margin: auto;" loop autoplay></lottie-player>
+      </div>
+
+    </div>
+  </div>
+</section>
+{% endblock content %}
+
+{% block jsblock %} {% endblock %}
