@@ -1,11 +1,14 @@
 import os
 import re
 import json
+import numpy as np
 import pandas as pd
 from langchain import OpenAI
 from django.views import View
 from dotenv import load_dotenv
 from datetime import datetime
+import matplotlib.pyplot as plt
+import plotly.graph_objects as go
 from CrimeMapping.views import crime
 from CrimeMapping.models import FirData
 from django.shortcuts import render, redirect
@@ -15,6 +18,14 @@ load_dotenv()
 
 rjdf = pd.DataFrame(FirData.objects.all().values())
 ukdf = pd.read_csv("CrimeMapping/data/UK-Dataset-Final.csv", on_bad_lines='skip' )
+ksdf= pd.read_csv("CrimeMapping/data/FIR_Details.csv")
+dfr= pd.read_csv("CrimeMapping/data/RowdySheeterDetails.csv")
+dfm= pd.read_csv("CrimeMapping/data/MOBsData.csv")
+
+dfm = dfm[dfm['AGE'].le(90)]
+dfm['AGE'] = dfm['AGE'].abs()
+
+
 
 class CrimeAnalysis(View):
     
@@ -151,6 +162,92 @@ class CrimeAnalysis(View):
             *****************
             ''', type_count4)
             print(df_type4)
+
+
+
+            # #RowdySetters Data Analaysis
+
+            # # Age Distribution of the RowdySetters
+            counts, bin_edges = np.histogram(dfr['Age'], bins=20)
+
+            x_age_rowdy = bin_edges.tolist()
+            y_age_rowdy = counts.tolist()
+
+            # RowdySetter Category
+            x_rowdy_category = dfr['Rowdy_Category'].unique().tolist()
+            y_rowdy_category = dfr['Rowdy_Category'].value_counts().tolist()
+
+            # #Top 10 District Name
+            district_counts = dfr['District_Name'].value_counts().nlargest(10).reset_index()
+            print(district_counts)
+            x_rowdy_district = district_counts['District_Name'].tolist()
+            y_rowdy_district = district_counts['count'].tolist()    
+
+            # #Top 10 Unit Name
+            unit_counts = dfr['Unit_Name'].value_counts().nlargest(10).reset_index()
+            x_rowdy_units = unit_counts['Unit_Name'].tolist()
+            y_rowdy_units = unit_counts['count'].tolist()
+
+
+            #MOBs Data Analaysis
+
+            # MOBs Age vs Gang Strength more than 0, Scatter Plot
+            gang_strength_gt_zero = dfm[dfm['Gang_Strength'] > 0]
+            x_age = gang_strength_gt_zero['AGE'].tolist()
+            y_strength = gang_strength_gt_zero['Gang_Strength'].tolist()
+
+            # Top 6 Caste of MOBs
+            caste_counts = dfm['Caste'].value_counts().sort_values(ascending=False).head(6)
+            caste_values = caste_counts.values.tolist()
+            caste_names = caste_counts.index.tolist()
+
+            # Top 10 Crime Groups
+            crime_group_counts = dfm['Crime_Group1'].value_counts().sort_values(ascending=False).head(20)
+            x_crime_group = crime_group_counts.index.tolist()
+            y_crime_group = crime_group_counts.values.tolist()
+
+
+            # Age vs Crime Head2
+            age_crime_type = dfm.groupby(['AGE', 'Crime_Head2']).size().reset_index().rename(columns={0: 'Count'})
+            x_crime_head2 = age_crime_type['AGE'].tolist()
+            y_crime_head2 = age_crime_type['Count'].tolist()
+
+            
+            # Sankey Chart - MOBs Class 1 and Cass 2
+            sankey_data = dfm[['Crime_Group1', 'Crime_Head2', 'class']].dropna()
+            sankey_data = sankey_data.groupby(['Crime_Group1', 'Crime_Head2', 'class']).size().reset_index(name='Count')
+            fig = go.Figure(data=[go.Sankey(
+                node=dict(
+                    pad=15,
+                    thickness=20,
+                    line=dict(color="black", width=0.5),
+                    label=sankey_data['Crime_Group1'].unique().tolist() + sankey_data['Crime_Head2'].unique().tolist() + sankey_data['class'].unique().tolist(),
+                    color="blue"
+                ),
+                link=dict(
+                    source=[sankey_data['Crime_Group1'].tolist().index(source) for source in sankey_data['Crime_Group1']],
+                    target=[len(sankey_data['Crime_Group1'].unique()) + len(sankey_data['Crime_Head2'].unique()) + sankey_data['class'].tolist().index(target) for target in sankey_data['class']],
+                    value=sankey_data['Count'],
+                    label=sankey_data['Crime_Head2'].tolist()
+                )
+            )])
+            fig.update_layout(title_text="Crime Group Flow", font_size=10)
+            # fig.show()
+
+
+            #Top 10 Occupation
+            occupation_counts = dfm['Occupation'].value_counts().sort_values(ascending=False).head(10)
+            x_occupation = occupation_counts.index.tolist()
+            y_occupation = occupation_counts.values.tolist()
+
+            #AGE vs Grading
+            x_values = dfm['Grading'].tolist()
+            y_values = dfm['AGE'].tolist()
+
+
+
+
+
             # dataT = str(tempDF.values.tolist())
             data = [
                 {

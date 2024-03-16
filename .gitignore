@@ -3,3 +3,6 @@ venv
 *.pyc
 .env
 /venv
+FIR_Details.csv
+MOBsData.csv
+RowdySheeterDetails.csv
