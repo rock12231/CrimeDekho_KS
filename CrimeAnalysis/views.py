@@ -1,8 +1,10 @@
 import os
 import re
 import json
+import base64
 import numpy as np
 import pandas as pd
+import networkx as nx
 from langchain import OpenAI
 from django.views import View
 from dotenv import load_dotenv
@@ -16,16 +18,15 @@ from langchain_experimental.agents.agent_toolkits.pandas.base import create_pand
 
 load_dotenv()
 
+
 rjdf = pd.DataFrame(FirData.objects.all().values())
 ukdf = pd.read_csv("CrimeMapping/data/UK-Dataset-Final.csv", on_bad_lines='skip' )
-ksdf= pd.read_csv("CrimeMapping/data/FIR_Details.csv")
+dfk= pd.read_csv("CrimeMapping/data/FIR_Details.csv", on_bad_lines='skip')
 dfr= pd.read_csv("CrimeMapping/data/RowdySheeterDetails.csv")
 dfm= pd.read_csv("CrimeMapping/data/MOBsData.csv")
 
 dfm = dfm[dfm['AGE'].le(90)]
 dfm['AGE'] = dfm['AGE'].abs()
-
-
 
 class CrimeAnalysis(View):
     
@@ -232,6 +233,9 @@ class CrimeAnalysis(View):
                 )
             )])
             fig.update_layout(title_text="Crime Group Flow", font_size=10)
+
+            image_data1 = fig.to_image(format="png")
+            encoded_string1 = base64.b64encode(image_data1).decode('utf-8')
             # fig.show()
 
 
@@ -245,7 +249,68 @@ class CrimeAnalysis(View):
             y_values = dfm['AGE'].tolist()
 
 
+            #Network Analysis
+            offender_network = dfm[['Person_No', 'Gang_Strength']].dropna()
+            G = nx.from_pandas_edgelist(offender_network, source='Person_No', target='Gang_Strength')
+            pos = nx.spring_layout(G)
+            plt.figure(figsize=(10, 8))
+            nx.draw(G, pos, node_color='lightgreen', with_labels=True)
 
+            plt.savefig('graph.png')
+
+            with open('graph.png', 'rb') as image_file:
+                encoded_string2 = base64.b64encode(image_file.read()).decode('utf-8')
+
+
+
+            #FIR Details
+            print(dfk.info())
+            # Month vs Crime Count
+            dfk['Month'] = pd.to_datetime(dfk['Month'])
+            monthly_crimes = dfk["Month"]
+            labels_monthly_crimes = monthly_crimes.index.tolist()
+            values_monthly_crimes = monthly_crimes.values.tolist()
+
+            # Various Crimes at different District
+            grouped_df_district_fir = dfk.groupby(['District_Name', 'CrimeGroup_Name']).size().reset_index(name='Count')
+            labels_district_fir = grouped_df[['District_Name', 'CrimeGroup_Name']].values.tolist()
+            values_district_fir = grouped_df['Count'].values.tolist()
+
+            # Victim Counts vs Accused Counts
+            victim_counts = dfk['VICTIM COUNT'].tolist()
+            accused_counts = dfk['Accused Count'].tolist()
+
+            # Top 5 Mean of Victim Count wrt CrimeGroup Name - Pie Plot
+            grouped_df = dfk.groupby('CrimeGroup_Name')['VICTIM COUNT'].mean()
+            top_5_crime_groups = grouped_df.nlargest(5)
+            X_top_5_crime_groups = top_5_crime_groups.index.tolist()
+            Y_top_5_crime_groups = top_5_crime_groups.values.tolist()
+
+            # Top 10 Sum of Victim Count wrt CrimeGroup Name - Bar Graph
+            grouped_df = dfk.groupby('CrimeGroup_Name')['VICTIM COUNT'].sum()
+            top_10_crime_groups = grouped_df.nlargest(10)
+            X_top_10_crime_groups = top_10_crime_groups.index.tolist()
+            Y_top_10_crime_groups = top_10_crime_groups.values.tolist()
+
+            # Distribution of the count of FIR Recorded at which Hour
+            dfk['Hour'] = pd.to_datetime(dfk['FIR_Reg_DateTime']).dt.hour
+            hourly_crimes = dfk.groupby('Hour')['FIR_ID'].count().reset_index()
+            labels_hourly_crimes = hourly_crimes['Hour'].tolist()
+            values_hourly_crimes = hourly_crimes['FIR_ID'].tolist()
+
+            # Time Series Behavior of the Offence Recorded
+            dfk['Offence_From_Date'] = pd.to_datetime(dfk['Offence_From_Date'])
+            dfk = dfk[dfk['Offence_From_Date'] >= pd.to_datetime('2014-01-01')]
+            crime_trend = dfk.groupby([pd.Grouper(key='Offence_From_Date', freq='M')])['FIR_ID'].count().reset_index()
+            crime_trend = crime_trend.rename(columns={'Offence_From_Date': 'Date', 'FIR_ID': 'Crime Count'})
+            labels_crime_trend = crime_trend['Date'].tolist()
+            values_crime_trend = crime_trend['Crime Count'].tolist()
+            print(labels_crime_trend, values_crime_trend)
+
+            # Counts of FIR Type
+            fir_type = dfk.groupby('FIR Type')['FIR_ID'].count().reset_index()
+            labels_fir_type = fir_type['FIR Type'].tolist()
+            values_fir_type = fir_type['FIR_ID'].tolist()
 
 
             # dataT = str(tempDF.values.tolist())
@@ -269,7 +334,110 @@ class CrimeAnalysis(View):
                 'title': 'Age Distribution of the victim reported in the FIR Records',
                 'dataX': type_count4,
                 'dataY': df_type4
-                }
+                },
+                                
+                {
+                'title': 'Age Distribution of the RowdyShetters',
+                'dataX': y_age_rowdy,
+                'dataY': x_age_rowdy
+                },                
+                {
+                'title': 'Category Count of Rowdy Shetter',
+                'dataX': y_rowdy_category,
+                'dataY': x_rowdy_category
+                },
+                {
+                'title': 'Top 10 District Name with the most Rowdy Details Recorded',
+                'dataX': y_rowdy_district,
+                'dataY': x_rowdy_district
+                },
+                {
+                'title': 'Top 10 Unit Name with the most Rowdy Details Recorded',
+                'dataX': y_rowdy_units,
+                'dataY': x_rowdy_units
+                },
+                {
+                'title': 'MOBs Age vs Gang Strength more than 0, Scatter Plot',
+                'dataX': y_strength,
+                'dataY': x_age
+                },
+                {
+                'title': 'Top 6 Caste Recorded of MOBs',
+                'dataX': caste_values,
+                'dataY': caste_names
+                },
+                {
+                'title': 'Top 10 Crime Groups Recorded in MOBs',
+                'dataX': y_crime_group,
+                'dataY': x_crime_group
+                },
+                {
+                'title': 'Relation between the Age and Crime Head2',
+                'dataX': y_crime_head2,
+                'dataY': x_crime_head2
+                },
+                {
+                'title': 'Top 10 Occupation of Offenders Recorded in MOBs',
+                'dataX': y_occupation,
+                'dataY': x_occupation
+                },
+                {
+                'title': 'Relation betwee the Age and the Grading',
+                'dataX': y_values,
+                'dataY': x_values
+                },
+                {
+                'title': 'Sankey Chart - MOBs Class 1 and Cass 2',
+                'dataX': encoded_string1,
+                },
+                {
+                'title': 'Offender Network based on the Person_No and Gang Strength',
+                'dataX': encoded_string2,
+                },
+                
+                {
+                'title': 'Distribution of the Crime Rates in Month wisemanner',
+                'dataX': values_monthly_crimes,
+                'dataY': labels_monthly_crimes
+                },
+                {
+                'title': 'Various Crimes at different District',
+                'dataX': values_district_fir,
+                'dataY': labels_district_fir
+                },
+
+                {
+                'title': 'Victim Counts vs Accused Counts',
+                'dataX': accused_counts,
+                'dataY': victim_counts
+                },
+                {
+                'title': 'Top 5 Mean of Victim Count wrt CrimeGroup Name - Pie Plot',
+                'dataX': Y_top_5_crime_groups,
+                'dataY': X_top_5_crime_groups
+                },
+
+                {
+                'title': 'Top 10 Sum of Victim Count wrt CrimeGroup Name - Bar Graph',
+                'dataX': Y_top_10_crime_groups,
+                'dataY': X_top_10_crime_groups
+                },
+                {
+                'title': 'Distribution of the count of FIR Recorded at which Hour',
+                'dataX': values_hourly_crimes,
+                'dataY': labels_hourly_crimes
+                },
+
+                {
+                'title': 'Time Series Behavior of the Offence Recorded',
+                'dataX': values_crime_trend,
+                'dataY': labels_crime_trend
+                },
+                {
+                'title': 'Counts of FIR Type',
+                'dataX': values_fir_type,
+                'dataY': labels_fir_type
+                },
             ]
             # Convert rjdf to List of object
             context = {
@@ -286,6 +454,47 @@ class CrimeAnalysis(View):
                 'type_count2':type_count2,
                 'type_count3':type_count3,
                 'type_count4':type_count4,
+
+                'x_age_rowdy':x_age_rowdy,
+                'x_rowdy_category':x_rowdy_category,
+                'x_rowdy_district':x_rowdy_district,
+                'x_rowdy_units':x_rowdy_units,
+                'x_age':x_age,
+                'caste_names':caste_names,
+                'x_crime_group':x_crime_group,
+                'x_crime_head2':x_crime_head2,
+                'x_occupation':x_occupation,
+                'x_values':x_values,
+
+                'labels_monthly_crimes':labels_monthly_crimes,
+                'labels_district_fir':labels_district_fir,
+                'victim_counts':victim_counts,
+                'X_top_5_crime_groups':X_top_5_crime_groups,
+                'X_top_10_crime_groups':X_top_10_crime_groups,
+                'labels_hourly_crimes':labels_hourly_crimes,
+                'labels_crime_trend':labels_crime_trend,
+                'labels_fir_type':labels_fir_type,
+        
+                'y_age_rowdy':y_age_rowdy,
+                'y_rowdy_category':y_rowdy_category,
+                'y_rowdy_district':y_rowdy_district,
+                'y_rowdy_units':y_rowdy_units,
+                'y_strength':y_strength,
+                'caste_values':caste_values,
+                'y_crime_group':y_crime_group,
+                'y_crime_head2':y_crime_head2,
+                'y_occupation':y_occupation,
+                'y_values':y_values,
+
+                'values_monthly_crimes':values_monthly_crimes,
+                'values_district_fir':values_district_fir,
+                'accused_counts':accused_counts,
+                'Y_top_5_crime_groups':Y_top_5_crime_groups,
+                'Y_top_10_crime_groups':Y_top_10_crime_groups,
+                'values_hourly_crimes':values_hourly_crimes,
+                'values_crime_trend':values_crime_trend,
+                'values_fir_type':values_fir_type,
+
                 'questions':data,
                 }
             return render(request, 'CrimeAnalysis/crimeanalysis.html',context)
