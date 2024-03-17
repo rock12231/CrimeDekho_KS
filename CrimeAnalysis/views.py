@@ -26,10 +26,12 @@ ukdf = pd.read_csv("CrimeMapping/data/UK-Dataset-Final.csv", on_bad_lines='skip'
 dfr= pd.read_csv("CrimeMapping/data/RowdySheeterDetails.csv")
 dfc=pd.read_csv("CrimeMapping/data/Complaints_Preprocessed.csv")
 dfm= pd.read_csv("CrimeMapping/data/MOBsData.csv")
+dfv=pd.read_csv("CrimeMapping/data/Victims_Preprocessed.csv")
 # print("_________________________________________________________________________")
 # print(dfk.info())
 dfm = dfm[dfm['AGE'].le(90)]
 dfm['AGE'] = dfm['AGE'].abs()
+dfv['age'] = dfv['age'].abs()
 
 class CrimeAnalysis(View):
     
@@ -369,6 +371,12 @@ class CrimeAnalysis(View):
             labels_occupation_counts = occupation_counts.index.tolist()
             counts_occupation_counts = occupation_counts.values.tolist()
 
+            #Sunburst Chart - Religion and Caste Associated - nan issue to be rectified
+            # df_filtered = dfc[dfc['Caste'] != 'N/A']
+            # fig2 = px.sunburst(df_filtered, path=['Caste', 'Religion'], title='Caste and Religion Distribution')
+            # image_data1 = fig2.to_image(format="png")
+    
+
             # Number of Crimes by District and Unit - Treemap format
 
             crime_count = dfc.groupby(['District_Name', 'UnitName'])['FIRNo'].count().reset_index()
@@ -386,6 +394,58 @@ class CrimeAnalysis(View):
 
             # fig.show()
 
+
+
+            #Victims Info Data
+            
+            # Age Distribution of the Victims
+            hist_data = np.histogram(dfv['age'], bins=30)
+            labels_victims_age = hist_data[1] 
+            values_victims_age = hist_data[0]
+
+
+            # Profession wrt Age - Box Plot
+            labels_profession_age = dfv['Profession'].unique()
+            values__profession_age = dfv.groupby('Profession')['age'].apply(list).tolist()
+
+            # Crime by Months - Recorded in the Victims Info - Bar Graph
+            crimes_v_month = dfv.groupby('Month')['Crime_No'].count().reset_index()
+            labels_crimes_v_month = crimes_v_month['Month'].tolist()
+            values_crimes_v_month = crimes_v_month['Crime_No'].tolist()
+
+            # Relation of Sex and Age - Voilon Chart
+
+            labels_sex = dfv['Sex'].unique()
+            values_sex_age = dfv.groupby('Sex')['age'].apply(list).tolist()
+
+            # Top 10 districts from Victims Info Recorded
+            district_v_crimes = dfv.groupby('District_Name')['Crime_No'].count().reset_index().sort_values('Crime_No', ascending=False).head(10)
+            labels_district_v_crimes = district_v_crimes['District_Name'].tolist()
+            values_district_v_crimes = district_v_crimes['Crime_No'].tolist()
+
+            # Radar Chart for the Top Profession with the Highest Crime Recorded wrt InjuryType
+            filtered_df = dfv[(dfv['Profession'].notnull()) & (dfv['InjuryType'].notnull()) & (dfv['InjuryType'] != 'N/A')]
+            crimes_by_prof_injury = filtered_df.groupby(['Profession', 'InjuryType'])['Crime_No'].count().reset_index()
+            top_20 = crimes_by_prof_injury.sort_values('Crime_No', ascending=False).head(20)
+            fig3 = px.bar_polar(top_20, r='Crime_No', theta='Profession', color='InjuryType', title='Top 20 Combinations of Profession and Injury Type by Crime Count (Excluding N/A)')
+            # fig3.show()
+
+
+            # Victim Distribution by Age Groups - Funnel Chart
+
+            age_bins = [0, 18, 30, 45, 60, 100]
+            age_labels = ['<18', '18-30', '30-45', '45-60', '60+']
+            dfv['age_group'] = pd.cut(dfv['age'], bins=age_bins, labels=age_labels)
+            victim_dist = dfv.groupby('age_group')['Victim_ID'].count().reset_index()
+            labels = victim_dist['age_group'].tolist()
+            values = victim_dist['Victim_ID'].tolist()
+
+            # Last two plots are meant to be plot on the geojson or Folium chart
+            # Crimes by State - Chloropleth Plot Data
+            crimes_by_state = dfv.groupby('PresentState')['Crime_No'].count().reset_index()
+
+            # Crimes by City (Karnataka) - Folium Chart
+            crimes_by_city = dfv.groupby('PresentCity')['Crime_No'].count().reset_index()
 
 
 
