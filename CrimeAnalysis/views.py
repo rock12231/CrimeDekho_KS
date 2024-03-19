@@ -25,7 +25,7 @@ ukdf = pd.read_csv("CrimeMapping/data/UK-Dataset-Final.csv", on_bad_lines='skip'
 # dfk= pd.read_csv("CrimeMapping/data/FIR_Details.csv", on_bad_lines='skip')
 dfr= pd.read_csv("CrimeMapping/data/Rowdy_Preprocessed.csv")
 dfc=pd.read_csv("CrimeMapping/data/Complaints_Preprocessed.csv")
-dfm= pd.read_csv("CrimeMapping/data/MOBsData.csv")
+dfm= pd.read_csv("CrimeMapping/data/MOBs_Preprocessed.csv")
 dfv=pd.read_csv("CrimeMapping/data/Victims_Preprocessed.csv")
 # print("_________________________________________________________________________")
 # print(dfk.info())
@@ -284,26 +284,26 @@ class CrimeAnalysis(View):
             values_district_fir = grouped_df_district_fir['Count'].values.tolist()
 
             # Victim Counts vs Accused Counts
-            victim_counts = dfk['VICTIM COUNT'].tolist()
-            accused_counts = dfk['Accused Count'].tolist()
+            victim_counts = dfk['VICTIM_COUNT'].tolist()
+            accused_counts = dfk['Accused_Count'].tolist()
 
             # Top 5 Mean of Victim Count wrt CrimeGroup Name - Pie Plot
-            grouped_df = dfk.groupby('CrimeGroup_Name')['VICTIM COUNT'].mean()
+            grouped_df = dfk.groupby('CrimeGroup_Name')['VICTIM_COUNT'].mean()
             top_5_crime_groups = grouped_df.nlargest(5)
             X_top_5_crime_groups = top_5_crime_groups.index.tolist()
             Y_top_5_crime_groups = top_5_crime_groups.values.tolist()
 
             # Top 10 Sum of Victim Count wrt CrimeGroup Name - Bar Graph
-            grouped_df = dfk.groupby('CrimeGroup_Name')['VICTIM COUNT'].sum()
+            grouped_df = dfk.groupby('CrimeGroup_Name')['VICTIM_COUNT'].sum()
             top_10_crime_groups = grouped_df.nlargest(10)
             X_top_10_crime_groups = top_10_crime_groups.index.tolist()
             Y_top_10_crime_groups = top_10_crime_groups.values.tolist()
 
-            # Distribution of the count of FIR Recorded at which Hour
-            dfk['Hour'] = pd.to_datetime(dfk['FIR_Reg_DateTime']).dt.hour
-            hourly_crimes = dfk.groupby('Hour')['FIR_ID'].count().reset_index()
-            labels_hourly_crimes = hourly_crimes['Hour'].tolist()
-            values_hourly_crimes = hourly_crimes['FIR_ID'].tolist()
+            # # Distribution of the count of FIR Recorded at which Hour
+            # dfk['Hour'] = pd.to_datetime(dfk['FIR_Reg_DateTime']).dt.hour
+            # hourly_crimes = dfk.groupby('Hour')['FIR_ID'].count().reset_index()
+            # labels_hourly_crimes = hourly_crimes['Hour'].tolist()
+            # values_hourly_crimes = hourly_crimes['FIR_ID'].tolist()
 
             # Time Series Behavior of the Offence Recorded
             dfk['Offence_From_Date'] = pd.to_datetime(dfk['Offence_From_Date'])
@@ -315,8 +315,8 @@ class CrimeAnalysis(View):
             print(labels_crime_trend, values_crime_trend)
 
             # Counts of FIR Type
-            fir_type = dfk.groupby('FIR Type')['FIR_ID'].count().reset_index()
-            labels_fir_type = fir_type['FIR Type'].tolist()
+            fir_type = dfk.groupby('FIR_Type')['FIR_ID'].count().reset_index()
+            labels_fir_type = fir_type['FIR_Type'].tolist()
             values_fir_type = fir_type['FIR_ID'].tolist()
 
 
@@ -558,11 +558,11 @@ class CrimeAnalysis(View):
                 'dataX': Y_top_10_crime_groups,
                 'dataY': X_top_10_crime_groups
                 },
-                {
-                'title': 'Distribution of the count of FIR Recorded at which Hour',
-                'dataX': values_hourly_crimes,
-                'dataY': labels_hourly_crimes
-                },
+                # {
+                # 'title': 'Distribution of the count of FIR Recorded at which Hour',
+                # 'dataX': values_hourly_crimes,
+                # 'dataY': labels_hourly_crimes
+                # },
 
                 {
                 'title': 'Time Series Behavior of the Offence Recorded',
@@ -607,7 +607,7 @@ class CrimeAnalysis(View):
                 'victim_counts':victim_counts,
                 'X_top_5_crime_groups':X_top_5_crime_groups,
                 'X_top_10_crime_groups':X_top_10_crime_groups,
-                'labels_hourly_crimes':labels_hourly_crimes,
+                # 'labels_hourly_crimes':labels_hourly_crimes,
                 'labels_crime_trend':labels_crime_trend,
                 'labels_fir_type':labels_fir_type,
         
@@ -627,7 +627,7 @@ class CrimeAnalysis(View):
                 'accused_counts':accused_counts,
                 'Y_top_5_crime_groups':Y_top_5_crime_groups,
                 'Y_top_10_crime_groups':Y_top_10_crime_groups,
-                'values_hourly_crimes':values_hourly_crimes,
+                # 'values_hourly_crimes':values_hourly_crimes,
                 'values_crime_trend':values_crime_trend,
                 'values_fir_type':values_fir_type,
 

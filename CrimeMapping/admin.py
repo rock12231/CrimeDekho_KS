@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 # Register your models here.
-from CrimeMapping.models import Crimes2001, ContactUs, GraphData, PoliceStationList ,ukdata, UKPoliceStationList, FirData, RajPolice, PoliceStationJaipurList, FirKarnataka, VictimInfo, RowdyShetters, ComplainantsDetails
+from CrimeMapping.models import Crimes2001, ContactUs, GraphData, PoliceStationList ,ukdata, UKPoliceStationList, FirData, RajPolice, PoliceStationJaipurList, FirKarnataka, VictimInfo, RowdyShetters, ComplainantsDetails, MOBDetails
 
 class Crime(admin.ModelAdmin):
     list_display = ('id','caseno', 'block', 'Type', 'Type_desc', 'Where', 'Arrest', 'Domestic', 'District', 'Community_area', 'Year', 'Latitude', 'Longitude', 'Date')
@@ -57,6 +57,11 @@ admin.site.register(VictimInfo, VictimInfoAdmin)
 class RowdyShettersAdmin(admin.ModelAdmin):
     list_display = ('District_Name', 'Unit_Name', 'Rowdy_Sheet_No', 'Name', 'AliasName', 'RS_Open_Date', 'Rowdy_Classification_Details', 'Activities_Description', 'Rowdy_Category', 'PrevCase_Details', 'Address', 'Age', 'Father_Name', 'Source_Of_Income', 'LastUpdatedDate', 'PresentWhereabout')
 admin.site.register(RowdyShetters, RowdyShettersAdmin)
+
+class MOBDetailsAdmin(admin.ModelAdmin):
+    list_display = ('District_Name', 'Unit_Name', 'Name', 'Person_No', 'MOB_Number', 'MobOpenDate', 'MOB_Open_Year', 'Arrested_By', 'KGID', 'Caste', 'Grading', 'Occupation', 'PS_Native', 'PS_District', 'Offender_Class', 'Crime_No', 'ActSection', 'Brief_Fact', 'Present_WhereAbouts', 'Gang_Strength', 'Ident_Officer', 'officer_rank', 'Crime_Group1', 'Crime_Head2', 'class1', 'AGE', 'PresentAge', 'DOB', 'Address', 'SEX', 'Locality', 'LastUpdatedDate')
+
+admin.site.register(MOBDetails, MOBDetailsAdmin)
 
 
 class ComplainantsDetailsAdmin(admin.ModelAdmin):
