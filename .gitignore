@@ -8,10 +8,5 @@ MOBsData.csv
 Complaints_Preprocessed.csv
 Victims_Preprocessed.csv
 Rowdy_Preprocessed.csv
-<<<<<<< HEAD
 MOBs_Preprocessed.csv
-db.sqlite3-journal
-db.*
-=======
-MOBs_Preprocessed.csv
->>>>>>> 5ec1bd17f3cc4e1a7eec2573366f71e7e8f72aa4
+

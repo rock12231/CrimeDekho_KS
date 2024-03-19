@@ -6,7 +6,7 @@ import pandas as pd
 from CrimeMapping.models import PoliceStationJaipurList, FirKarnataka
 jaipur_police=pd.read_csv("CrimeMapping/data/jaipur_p.csv")
 # Create your views here.
-dfk=pd.read_csv("CrimeMapping/data/FIR_Details.csv")
+# dfk=pd.read_csv("CrimeMapping/data/FIR_Details.csv")
 
 class Home(View):
     def get(self, request):
