@@ -105,8 +105,14 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
+    },
+    'custom_db': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'custom_db.sqlite3',
     }
 }
+
+DATABASE_ROUTERS = ['CrimeReport.routers.CustomDBRouter']
 
 
 # Password validation
