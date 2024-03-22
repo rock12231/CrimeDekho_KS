@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 import networkx as nx
 import plotly.express as px
-# from langchain import OpenAI
+from langchain import OpenAI
 from django.views import View
 from dotenv import load_dotenv
 from datetime import datetime
@@ -15,7 +15,7 @@ import plotly.graph_objects as go
 from CrimeMapping.views import crime
 from CrimeMapping.models import FirData
 from django.shortcuts import render, redirect
-# from langchain_experimental.agents.agent_toolkits.pandas.base import create_pandas_dataframe_agent
+from langchain_experimental.agents.agent_toolkits.pandas.base import create_pandas_dataframe_agent
 
 load_dotenv()
 
@@ -25,22 +25,22 @@ load_dotenv()
 
 rjdf = pd.DataFrame(FirData.objects.all().values())
 ukdf = pd.read_csv("CrimeMapping/data/UK-Dataset-Final.csv", on_bad_lines='skip' )
-# dfr= pd.read_csv("CrimeMapping/data/Rowdy_Preprocessed.csv")
-# dfc=pd.read_csv("CrimeMapping/data/Complaints_Preprocessed.csv")
-# dfm= pd.read_csv("CrimeMapping/data/MOBs_Preprocessed.csv")
-# dfv=pd.read_csv("CrimeMapping/data/Victims_Preprocessed.csv")
-# print("_________________________________________________________________________")
+dfr= pd.read_csv("CrimeMapping/data/Rowdy_Preprocessed.csv")
+dfc=pd.read_csv("CrimeMapping/data/Complaints_Preprocessed.csv")
+dfm= pd.read_csv("CrimeMapping/data/MOBs_Preprocessed.csv")
+dfv=pd.read_csv("CrimeMapping/data/Victims_Preprocessed.csv")
+print("_________________________________________________________________________")
 # print(dfk.info())
-# dfm = dfm[dfm['AGE'].le(90)]
-# dfm['AGE'] = dfm['AGE'].abs()
-# dfv['age'] = dfv['age'].abs()
+dfm = dfm[dfm['AGE'].le(90)]
+dfm['AGE'] = dfm['AGE'].abs()
+dfv['age'] = dfv['age'].abs()
 
 class CrimeAnalysis(View):
     
     def get(self, request):
         if request.user.is_authenticated:
 
-            # dfk = pd.read_csv("CrimeMapping/data/FIR_Details.csv", on_bad_lines='skip')
+            dfk = pd.read_csv("CrimeMapping/data/FIR_Details.csv", on_bad_lines='skip')
 
 
 
@@ -643,51 +643,51 @@ class CrimeAnalysis(View):
         # pp()
         return redirect('/login')
 
-    # def agent_llm(self, ukdf):
-    #     llm = OpenAI(openai_api_key=os.getenv('OPENAI_API_KEY'))
+    def agent_llm(self, ukdf):
+        llm = OpenAI(openai_api_key=os.getenv('OPENAI_API_KEY'))
 
-    #     return create_pandas_dataframe_agent(llm, rjdf, verbose=False)
+        return create_pandas_dataframe_agent(llm, rjdf, verbose=False)
 
 
-    # def query_llm(self, agent, query):
+    def query_llm(self, agent, query):
 
-    #     prompt = (
-    #         """
-    #             For the following query, if it requires drawing a table, reply as follows:
-    #             {"table": {"columns": ["column1", "column2", ...], "data": [[value1, value2, ...], [value1, value2, ...], ...]}}
+        prompt = (
+            """
+                For the following query, if it requires drawing a table, reply as follows:
+                {"table": {"columns": ["column1", "column2", ...], "data": [[value1, value2, ...], [value1, value2, ...], ...]}}
 
-    #             If the query requires creating a bar chart, reply as follows:
-    #             {"bar": {"columns": ["A", "B", "C", ...], "data": [25, 24, 10, ...]}}
+                If the query requires creating a bar chart, reply as follows:
+                {"bar": {"columns": ["A", "B", "C", ...], "data": [25, 24, 10, ...]}}
 
-    #             If the query requires creating a line chart, reply as follows:
-    #             {"line": {"columns": ["A", "B", "C", ...], "data": [25, 24, 10, ...]}}
+                If the query requires creating a line chart, reply as follows:
+                {"line": {"columns": ["A", "B", "C", ...], "data": [25, 24, 10, ...]}}
 
-    #             The various types of chart, "bar", "line" and "pie" plot
+                The various types of chart, "bar", "line" and "pie" plot
 
-    #             If it is just asking a question that requires neither, reply as follows:
-    #             {"answer": "answer"}
-    #             Example:
-    #             {"answer": "The title with the highest rating is 'Gilead'"}
+                If it is just asking a question that requires neither, reply as follows:
+                {"answer": "answer"}
+                Example:
+                {"answer": "The title with the highest rating is 'Gilead'"}
 
-    #             If you do not know the answer, reply as follows:
-    #             {"answer": "I do not know."}
+                If you do not know the answer, reply as follows:
+                {"answer": "I do not know."}
 
-    #             Return all output as a string.
+                Return all output as a string.
 
-    #             All strings in "columns" list and data list, should be in double quotes,
+                All strings in "columns" list and data list, should be in double quotes,
 
-    #             For example: {"columns": ["title", "ratings_count"], "data": [["Gilead", 361], ["Spider's Web", 5164]]}
+                For example: {"columns": ["title", "ratings_count"], "data": [["Gilead", 361], ["Spider's Web", 5164]]}
 
-    #             Lets think step by step.
+                Lets think step by step.
 
-    #             Below is the query.
-    #             Query: 
-    #             """
-    #         + query
-    #     )
+                Below is the query.
+                Query: 
+                """
+            + query
+        )
 
-    #     response = agent.run(prompt)
-    #     return response.__str__()
+        response = agent.run(prompt)
+        return response.__str__()
 
 
 
