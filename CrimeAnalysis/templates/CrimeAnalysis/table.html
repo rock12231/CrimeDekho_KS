@@ -1,0 +1,244 @@
+{% extends 'CrimeMapping/base.html' %}
+{% load static %}
+{% block title %} Crime Analysis {% endblock %}
+{% block cssblock %}
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+<style>
+    #select:focus {
+        border-color: #ff80ff;
+        box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.075) inset, 0px 0px 8px rgba(255, 100, 255, 0.5);
+    }
+
+    .toolbar {
+        float: left;
+    }
+
+    .cust-btn {
+        position: absolute;
+        margin-left: 40%;
+        margin-top: 10px;
+        z-index: 1;
+        color: black;
+        background: white;
+        border: 1px solid;
+    }
+
+    .cust-btn:hover {
+        position: absolute;
+        margin-left: 40%;
+        margin-top: 10px;
+        z-index: 1;
+        color: black;
+        background: #f4f4f4;
+        border: 1px solid;
+    }
+
+    .cust-btn:focus {
+        position: absolute;
+        margin-left: 40%;
+        margin-top: 10px;
+        z-index: 1;
+        color: black;
+        background: #f4f4f4;
+        border: 1px solid;
+    }
+</style>
+<!-- Data Table -->
+<link rel="stylesheet" type="text/css" href="{% static 'assets/vendor/datatable/css/jquery.dataTables.css' %}">
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<!-- https://code.jquery.com/jquery-3.5.1.js -->
+<script type="text/javascript" charset="utf8"
+    src="{% static 'assets/vendor/datatable/js/jquery.dataTables.js' %}"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+<!-- Multi Select -->
+<link href="{% static 'assets/vendor/select2/css/select2.min.css' %}" rel="stylesheet" />
+<script src="{% static 'assets/vendor/select2//js/select2.min.js' %}"></script>
+{% endblock %}
+{% block content %}
+<!-- ======= Header ======= -->
+<main id="main">
+
+    <!-- ======= Breadcrumbs ======= -->
+    <div class="breadcrumbs">
+        <div class="page-header d-flex align-items-center" style="background-image: url(' {% static "assets/img/crime_analysis.png" %}') ;">
+            <div class="container position-relative">
+                <div class="row d-flex justify-content-center">
+                    <div class="col-lg-6 text-center">
+                        <h2>Crime Analysis</h2>
+                        <!-- <p>Crimedekho helps you understand the extent of rising crimes in your region using crimeanalysis. 
+                            Report crimes and let people be aware of the crime rates as we map the data to geographical aspects
+                            and make it easy for you to understand the dynamics of crime.
+                        </p> -->
+                        <p>Crime analysis utilizes Generative AI and Statistics to analyze crime data, 
+                            providing visual insights for a clearer understanding of criminal activity.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <nav>
+            <div class="container">
+                <ol>
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/">Crime Analytics</a></li>
+                    <li>Table</li>
+                </ol>
+            </div>
+        </nav>
+    </div>
+    <!-- End Breadcrumbs -->
+
+ 
+
+    <section style="padding: 5px;" id="get-a-quote" class="get-a-quote mb-5">
+        <div class="container" data-aos="fade-up">
+            <div class="row g-0">            
+                <div class="col-lg-12 mt-2">
+                    <div class="table-responsive">
+                        <table id="exampleone" class="display" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th>Action</th>
+                                    <th>District Name</th>
+                                    <th>FIR No</th>
+                                    <!-- <th>RI</th> -->
+                                    <!-- <th>Year</th> -->
+                                    <!-- <th>Month</th> -->
+                                    <!-- <th>Offence From Date</th> -->
+                                    <!-- <th>Offence To Date</th> -->
+                                    <!-- <th>FIR Reg DateTime</th> -->
+                                    <!-- <th>FIR Date</th> -->
+                                    <!-- <th>FIR Type</th> -->
+                                    <!-- <th>FIR Stage</th> -->
+                                    <!-- <th>Complaint Mode</th> -->
+                                    <!-- <th>CrimeGroup Name</th> -->
+                                    <!-- <th>CrimeHead Name</th> -->
+                                    <!-- <th>Latitude</th> -->
+                                    <!-- <th>Longitude</th> -->
+                                    <!-- <th>Act Section</th> -->
+                                    <th>IOName</th>
+                                    <!-- <th>KGID</th> -->
+                                    <!-- <th>Internal IO</th> -->
+                                    <!-- <th>Place of Offence</th> -->
+                                    <!-- <th>Distance from PS</th> -->
+                                    <!-- <th>Beat Name</th> -->
+                                    <!-- <th>Village Area Name</th> -->
+                                    <!-- <th>Male</th> -->
+                                    <!-- <th>Female</th> -->
+                                    <!-- <th>Boy</th> -->
+                                    <!-- <th>Girl</th> -->
+                                    <!-- <th>Age 0</th> -->
+                                    <!-- <th>VICTIM COUNT</th> -->
+                                    <!-- <th>Accused Count</th> -->
+                                    <!-- <th>Arrested Male</th> -->
+                                    <!-- <th>Arrested Female</th> -->
+                                    <!-- <th>Arrested Count</th> -->
+                                    <!-- <th>Accused ChargeSheeted Count</th> -->
+                                    <!-- <th>Conviction Count</th> -->
+                                    <!-- <th>FIR ID</th> -->
+                                    <!-- <th>Unit ID</th> -->
+                                    <!-- <th>Crime No</th> -->
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</main><!-- End #main -->
+
+<script>
+    function format(d) {
+    var html = '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">';
+    for (var key in d) {
+        if (d.hasOwnProperty(key)) {
+            html += '<tr><td>' + key + ':</td><td>' + d[key] + '</td></tr>';
+        }
+    }
+    html += '</table>';
+    return html;
+}
+
+    $(document).ready(function () {
+        var table = $('#exampleone').DataTable({
+            pageLength: 10,
+            style: 'os',
+            search: {
+                return: true,
+            },
+            dom: '<"toolbar">frtip',
+            data: {{ JSONdata | safe}},
+        columns: [
+        {
+            className: 'dt-control',
+            orderable: false,
+            data: null,
+            defaultContent: '',
+        },
+        { "data": "District_Name" },
+        { "data": "FIRNo" },
+        // { "data": "RI" },
+        // { "data": "Year" },
+        // { "data": "Month" },
+        // { "data": "Offence_From_Date" },
+        // { "data": "Offence_To_Date" },
+        // { "data": "FIR_Reg_DateTime" },
+        // { "data": "FIR_Date" },
+        // { "data": "FIR_Type" },
+        // { "data": "FIR_Stage" },
+        // { "data": "Complaint_Mode" },
+        // { "data": "CrimeGroup_Name" },
+        // { "data": "CrimeHead_Name" },
+        // { "data": "Latitude" },
+        // { "data": "Longitude" },
+        // { "data": "ActSection" },
+        { "data": "IOName" },
+        // { "data": "KGID" },
+        // { "data": "Internal_IO" },
+        // { "data": "Place_of_Offence" },
+        // { "data": "Distance_from_PS" },
+        // { "data": "Beat_Name" },
+        // { "data": "Village_Area_Name" },
+        // { "data": "Male" },
+        // { "data": "Female" },
+        // { "data": "Boy" },
+        // { "data": "Girl" },
+        // { "data": "Age_0" },
+        // { "data": "VICTIM_COUNT" },
+        // { "data": "Accused_Count" },
+        // { "data": "Arrested_Male" },
+        // { "data": "Arrested_Female" },
+        // { "data": "Arrested_Count" },
+        // { "data": "Accused_ChargeSheeted_Count" },
+        // { "data": "Conviction_Count" },
+        // { "data": "FIR_ID" },
+        // { "data": "Unit_ID" },
+        // { "data": "Crime_No" }
+    ],
+        order: [[1, 'asc']],
+          });
+    // Add event listener for opening and closing details
+    $('#exampleone tbody').on('click', 'td.dt-control', function () {
+        var tr = $(this).closest('tr');
+        var row = table.row(tr);
+
+        if (row.child.isShown()) {
+            // This row is already open - close it
+            row.child.hide();
+            tr.removeClass('shown');
+        } else {
+            // Open this row
+            row.child(format(row.data())).show();
+            tr.addClass('shown');
+        }
+    });
+    $("div.toolbar").html('<b>Crime Analysis {{ crime.startendDates|default:"2022-2023" }}</b>');
+      });
+</script>
+
+{% endblock content %}
+{% block jsblock %} {% endblock %}
