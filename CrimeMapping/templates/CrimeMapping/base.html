@@ -74,16 +74,23 @@
 
             <li>
               <a href="{% url 'fir' %}"
-                class="hvr-grow {% if request.resolver_match.view_name == 'fir' %}active{% endif %}">FIR Data</a>
+                class="hvr-grow {% if request.resolver_match.view_name == 'fir' %}active{% endif %}">FIR</a>
             </li>
 
             <li>
               <a href="{% url 'crimemapping' %}"
-                class="hvr-grow {% if request.resolver_match.view_name == 'crimemapping' %}active{% endif %}">Crime Mapping</a>
+                class="hvr-grow {% if request.resolver_match.view_name == 'crimemapping' %}active{% endif %}">Mapping</a>
             </li>
-            <li>
+            <!-- <li>
               <a href="{% url 'crimeanalysis' %}"
-                class="hvr-grow {% if request.resolver_match.view_name == 'crimeanalysis' %}active{% endif %}">Crime Analysis</a>
+                class="hvr-grow {% if request.resolver_match.view_name == 'crimeanalysis' %}active{% endif %}">Analysis</a>
+            </li> -->
+            <li class="dropdown"><a class=" hvr-grow {% if request.resolver_match.view_name == 'crimeanalysis' %} active{% endif %}"><span>Analysis</span> <i class="bi bi-chevron-down dropdown-indicator"></i></a>
+              <ul>
+                <li><a  href="{% url 'crimeanalysis' %}" class="active">Crime Analysis</a></li>
+                <li><a  href="{% url 'crimeanalysischart' %}">Crime Chart</a></li>
+                <li><a  href="{% url 'crimeanalysistable' %}">Crime Table</a></li>
+              </ul>
             </li>
             <li>
               <a href="{% url 'about' %}"
