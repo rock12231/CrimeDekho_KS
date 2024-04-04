@@ -2,6 +2,7 @@
 {% load static %}
 {% block title %} Crime Analysis {% endblock %}
 {% block cssblock %}
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 
 <style>
@@ -122,9 +123,15 @@
 
             </div>
         </div>
+        <div>
+            {% autoescape off %}
+            {{ plot_div }}
+            {% endautoescape %}
+        </div>
     </section>
 
 </main><!-- End #main -->
+
 <script>
 
     function selectFun() {

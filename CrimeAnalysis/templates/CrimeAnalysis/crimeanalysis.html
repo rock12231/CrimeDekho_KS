@@ -115,60 +115,6 @@
         </div>
     </section>
 
-    <section style="padding: 5px;" id="get-a-quote" class="get-a-quote mb-5">
-        <div class="container" data-aos="fade-up">
-            <div class="row g-0">
-                <hr>
-                <div class="col-lg-12 mt-4">
-                    <div class="input-group input-group">
-                        <div class="input-group-prepend">
-                            <label class="input-group-text rounded-0" for="inputGroupSelect01">Please Select
-                                Option</label>
-                        </div>
-                        <select id="select" class="form-select form-select-sm" aria-label=".form-select-sm example" onchange="selectFun();">
-                            <option selected>All Crime Data</option>
-                            {% comment %} <option value="1">Most Type of crime recorded</option>
-                            <option value="2">Location with most number of crimes are recorded</option>
-                            <option value="3">Type of crime in which most number of arrest is done</option>
-                            <option value="4">On which of day of week, the more crime is recorded</option>
-                            <option value="5">In which month, most no. of crime is recorded</option> {% endcomment %}
-                            {% for q in questions %}
-                            <option value="{{forloop.counter}}">{{q.title}}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                </div>
-
-                <div class="col-lg-12 mb-4" data-aos="fade-up" id="chartdiv">
-                    <canvas id="myChart" height="100px"></canvas>
-                </div>
-
-                <hr>
-
-                <div class="col-lg-12 mt-2">
-                    <div class="table-responsive">
-                        <table id="exampleone" class="display" style="width:100%">
-                            <thead>
-                                <tr>
-                                    <th>Action</th>
-                                    <th>case_no</th>
-                                    <th>date</th>
-                                    <th>police_station</th>
-                                    <th>ipc</th>
-                                    <th>ipc_no</th>
-                                    <th>time</th>
-                                    <th>CrPC</th>
-                                    <th>date_happened</th>
-                                    <th>date_reported</th>
-                                </tr>
-                            </thead>
-                        </table>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-    </section>
 
 </main><!-- End #main -->
 <script>
