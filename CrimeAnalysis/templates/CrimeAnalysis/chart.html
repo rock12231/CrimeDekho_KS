@@ -125,7 +125,23 @@
         </div>
         <div>
             {% autoescape off %}
-            {{ plot_div }}
+            {{ image2 }}
+            {% endautoescape %}
+
+            {% autoescape off %}
+            {{ image3 }}
+            {% endautoescape %}
+
+            {% autoescape off %}
+            {{ image31 }}
+            {% endautoescape %}
+
+            {% autoescape off %}
+            {{ image4 }}
+            {% endautoescape %}
+
+            {% autoescape off %}
+            {{ image5 }}
             {% endautoescape %}
         </div>
     </section>
@@ -152,7 +168,7 @@
     const data = {
         labels: {{ dataY | safe }} ,
     datasets: [{
-        label: 'Crime Analysis {{ crime.startendDates|default:"2022-2023" }}',
+        label: 'Crime Analysis {{ crime.startendDates|default:"2026-2024" }}',
         data: {{ dataX | safe }},
         backgroundColor: [
         'rgb(255, 99, 132)',

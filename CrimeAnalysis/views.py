@@ -329,9 +329,16 @@ class CrimeAnalysisChart(View):
             # #MOBs Data Analaysis
 
             # MOBs Age vs Gang Strength more than 0, Scatter Plot
-            gang_strength_gt_zero = dfm[dfm['Gang_Strength'] > 0]
+
+            sorted_dfm = dfm.sort_values(by='AGE', ascending=True)
+
+            # Filter the DataFrame to only include rows where 'Gang_Strength' is greater than 0
+            gang_strength_gt_zero = sorted_dfm[sorted_dfm['Gang_Strength'] > 0]
+
+            # Convert the 'AGE' and 'Gang_Strength' columns to lists
             x_age = gang_strength_gt_zero['AGE'].tolist()
             y_strength = gang_strength_gt_zero['Gang_Strength'].tolist()
+
 
             # Top 6 Caste of MOBs
             caste_counts = dfm['Caste'].value_counts().sort_values(ascending=False).head(6)
@@ -350,29 +357,29 @@ class CrimeAnalysisChart(View):
             y_crime_head2 = age_crime_type['Count'].tolist()
 
             
-            # # Sankey Chart - MOBs Class 1 and Cass 2
-            # sankey_data = dfm[['Crime_Group1', 'Crime_Head2', 'class']].dropna()
-            # sankey_data = sankey_data.groupby(['Crime_Group1', 'Crime_Head2', 'class']).size().reset_index(name='Count')
-            # fig = go.Figure(data=[go.Sankey(
-            #     node=dict(
-            #         pad=15,
-            #         thickness=20,
-            #         line=dict(color="black", width=0.5),
-            #         label=sankey_data['Crime_Group1'].unique().tolist() + sankey_data['Crime_Head2'].unique().tolist() + sankey_data['class'].unique().tolist(),
-            #         color="blue"
-            #     ),
-            #     link=dict(
-            #         source=[sankey_data['Crime_Group1'].tolist().index(source) for source in sankey_data['Crime_Group1']],
-            #         target=[len(sankey_data['Crime_Group1'].unique()) + len(sankey_data['Crime_Head2'].unique()) + sankey_data['class'].tolist().index(target) for target in sankey_data['class']],
-            #         value=sankey_data['Count'],
-            #         label=sankey_data['Crime_Head2'].tolist()
-            #     )
-            # )])
-            # fig.update_layout(title_text="Crime Group Flow", font_size=10)
+            # Sankey Chart - MOBs Class 1 and Cass 2
+            sankey_data = dfm[['Crime_Group1', 'Crime_Head2', 'class']].dropna()
+            sankey_data = sankey_data.groupby(['Crime_Group1', 'Crime_Head2', 'class']).size().reset_index(name='Count')
+            plot_div21 = go.Figure(data=[go.Sankey(
+                node=dict(
+                    pad=15,
+                    thickness=20,
+                    line=dict(color="black", width=0.5),
+                    label=sankey_data['Crime_Group1'].unique().tolist() + sankey_data['Crime_Head2'].unique().tolist() + sankey_data['class'].unique().tolist(),
+                    color="blue"
+                ),
+                link=dict(
+                    source=[sankey_data['Crime_Group1'].tolist().index(source) for source in sankey_data['Crime_Group1']],
+                    target=[len(sankey_data['Crime_Group1'].unique()) + len(sankey_data['Crime_Head2'].unique()) + sankey_data['class'].tolist().index(target) for target in sankey_data['class']],
+                    value=sankey_data['Count'],
+                    label=sankey_data['Crime_Head2'].tolist()
+                )
+            )])
+            plot_div21.update_layout(title_text="Crime Group Flow", font_size=10)
 
             # image_data1 = fig.to_image(format="png")
             # encoded_string1 = base64.b64encode(image_data1).decode('utf-8')
-            # # fig.show()
+            plot_div2 = plot_div21.to_html(full_html=False, include_plotlyjs='cdn')
 
 
             #Top 10 Occupation
@@ -385,7 +392,7 @@ class CrimeAnalysisChart(View):
             y_values = dfm['AGE'].tolist()
 
 
-            # #Network Analysis
+            #Network Analysis
             # offender_network = dfm[['Person_No', 'Gang_Strength']].dropna()
             # G = nx.from_pandas_edgelist(offender_network, source='Person_No', target='Gang_Strength')
             # pos = nx.spring_layout(G)
@@ -396,6 +403,52 @@ class CrimeAnalysisChart(View):
 
             # with open('graph.png', 'rb') as image_file:
             #     encoded_string2 = base64.b64encode(image_file.read()).decode('utf-8')
+
+            offender_network = dfm[['Person_No', 'Gang_Strength']].dropna()
+            G = nx.from_pandas_edgelist(offender_network, source='Person_No', target='Gang_Strength')
+            pos = nx.spring_layout(G)
+            for node in G.nodes():
+                G.nodes[node]['pos'] = pos[node]
+
+            edges = []
+            for edge in G.edges():
+                x0, y0 = G.nodes[edge[0]]['pos']
+                x1, y1 = G.nodes[edge[1]]['pos']
+                trace = go.Scatter(x=tuple([x0, x1]), y=tuple([y0, y1]),
+                                    mode='lines',
+                                    line=dict(color='rgb(210,210,210)', width=1),
+                                    hoverinfo='none'
+                                    )
+                edges.append(trace)
+
+            node_trace = go.Scatter(x=[], y=[], text=[], mode='markers', hoverinfo='text',
+                                marker=dict(color='lightgreen', size=20, line=dict(color='rgb(50,50,50)', width=0.5)))
+
+            for node in G.nodes():
+                x, y = G.nodes[node]['pos']
+                node_trace['x'] += tuple([x])
+                node_trace['y'] += tuple([y])
+                node_trace['text'] += tuple(['<b>' + str(node) + '</b>'])
+
+            layout = go.Layout(title='Offender Network',
+                            showlegend=False,
+                            hovermode='closest',
+                            margin=dict(b=20, l=5, r=5, t=40),
+                            xaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
+                            yaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
+                            height=600,
+                            width=800
+                            )
+
+            fig = go.Figure(layout=layout)
+
+            for edge in edges:
+                fig.add_trace(edge)
+                fig.add_trace(node_trace)
+
+
+            plot_div3 = fig.to_html(full_html=False, include_plotlyjs='cdn')
+            # fig.show()
 
 
 
@@ -506,28 +559,30 @@ class CrimeAnalysisChart(View):
             labels_occupation_counts = occupation_counts.index.tolist()
             counts_occupation_counts = occupation_counts.values.tolist()
 
-            # #Sunburst Chart - Religion and Caste Associated - nan issue to be rectified
-            # df_filtered = dfc[dfc['Caste'] != 'N/A']
-            # fig_suburst_religion= px.sunburst(df_filtered, path=['Caste', 'Religion'], title='Caste and Religion Distribution')
+            #Sunburst Chart - Religion and Caste Associated - nan issue to be rectified
+            temp_dfc=dfc.dropna()
+            df_filtered = temp_dfc[temp_dfc['Caste'] != 'N/A']
+            fig_suburst_religion= px.sunburst(df_filtered, path=['Caste', 'Religion'], title='Caste and Religion Distribution')
+            plot_div31= fig_suburst_religion.to_html(full_html=False, include_plotlyjs='cdn') 
             # # image_data1 = fig2.to_image(format="png")
     
 
             # # Number of Crimes by District and Unit - Treemap format
 
-            # crime_count = dfc.groupby(['District_Name', 'UnitName'])['FIRNo'].count().reset_index()
-            # crime_count.columns = ['District_Name', 'UnitName', 'Count']
+            crime_count = dfc.groupby(['District_Name', 'UnitName'])['FIRNo'].count().reset_index()
+            crime_count.columns = ['District_Name', 'UnitName', 'Count']
 
-            # fig = px.treemap(crime_count, path=['District_Name', 'UnitName'], values='Count',
-            #                 color='Count', color_continuous_scale='Viridis',
-            #                 title='Number of Crimes by District and Unit')
+            fig2 = px.treemap(crime_count, path=['District_Name', 'UnitName'], values='Count',
+                            color='Count', color_continuous_scale='Viridis',
+                            title='Number of Crimes by District and Unit')
 
-            # fig.update_layout(
-            #     margin=dict(t=50, l=25, r=25, b=25),
-            #     font_family='Arial',
-            #     font_size=12
-            # )
-
-            # # fig.show()
+            fig2.update_layout(
+                margin=dict(t=50, l=25, r=25, b=25),
+                font_family='Arial',
+                font_size=12
+            )
+            plot_div4 = fig2.to_html(full_html=False, include_plotlyjs='cdn') 
+            # # fig2.show()
 
 
 
@@ -558,12 +613,13 @@ class CrimeAnalysisChart(View):
             labels_district_v_crimes = district_v_crimes['District_Name'].tolist()
             values_district_v_crimes = district_v_crimes['Crime_No'].tolist()
 
-            # # Radar Chart for the Top Profession with the Highest Crime Recorded wrt InjuryType
-            # filtered_df = dfv[(dfv['Profession'].notnull()) & (dfv['InjuryType'].notnull()) & (dfv['InjuryType'] != 'N/A')]
-            # crimes_by_prof_injury = filtered_df.groupby(['Profession', 'InjuryType'])['Crime_No'].count().reset_index()
-            # top_20 = crimes_by_prof_injury.sort_values('Crime_No', ascending=False).head(20)
-            # fig3 = px.bar_polar(top_20, r='Crime_No', theta='Profession', color='InjuryType', title='Top 20 Combinations of Profession and Injury Type by Crime Count (Excluding N/A)')
-            # # fig3.show()
+            # Radar Chart for the Top Profession with the Highest Crime Recorded wrt InjuryType
+            filtered_df = dfv[(dfv['Profession'].notnull()) & (dfv['InjuryType'].notnull()) & (dfv['InjuryType'] != 'N/A')]
+            crimes_by_prof_injury = filtered_df.groupby(['Profession', 'InjuryType'])['Crime_No'].count().reset_index()
+            top_20 = crimes_by_prof_injury.sort_values('Crime_No', ascending=False).head(20)
+            fig3 = px.bar_polar(top_20, r='Crime_No', theta='Profession', color='InjuryType', title='Top 20 Combinations of Profession and Injury Type by Crime Count (Excluding N/A)')
+            plot_div5 = fig3.to_html(full_html=False, include_plotlyjs='cdn') 
+            # fig3.show()
 
 
             # Victim Distribution by Age Groups - Funnel Chart
@@ -590,7 +646,7 @@ class CrimeAnalysisChart(View):
                 'title': 'Most Frequent Time of FIR Reported to the Station',
                 'dataX': type_count,
                 'dataY': df_type,
-                'chartType': 'pie'
+                'chartType': 'bar'
                 },
                 {
                 'title': 'Which Day most no. of FIRs are reported',
@@ -622,7 +678,7 @@ class CrimeAnalysisChart(View):
                 'title': 'Category Count of Rowdy Shetter',
                 'dataX': y_rowdy_category,
                 'dataY': x_rowdy_category,
-                'chartType': 'pie'
+                'chartType': 'bar'
                 },
                 {
                 'title': 'Top 10 District Name with the most Rowdy Details Recorded',
@@ -754,6 +810,11 @@ class CrimeAnalysisChart(View):
                 'type_count3':type_count3,
                 'type_count4':type_count4,
                 'image1':plot_div,
+                'image2':plot_div2,
+                'image3':plot_div3,
+                'image31':plot_div31,
+                'image4':plot_div4,
+                'image5':plot_div5,
 
                 # 'x_age_rowdy':x_age_rowdy,
                 # 'x_rowdy_category':x_rowdy_category,
