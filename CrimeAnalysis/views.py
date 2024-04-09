@@ -14,6 +14,7 @@ import matplotlib.pyplot as plt
 import plotly.graph_objects as go
 from CrimeMapping.views import crime
 from CrimeMapping.models import FirData
+from plotly.subplots import make_subplots
 from django.shortcuts import render, redirect
 from langchain_experimental.agents.agent_toolkits.pandas.base import create_pandas_dataframe_agent
 from django.core.paginator import Paginator
@@ -305,10 +306,24 @@ class CrimeAnalysisChart(View):
             # # #RowdySetters Data Analaysis
 
             # # Age Distribution of the RowdySetters
-            counts, bin_edges = np.histogram(dfr['Age'], bins=20)
+            # counts, bin_edges = np.histogram(dfr['Age'], bins=20)
 
-            x_age_rowdy = bin_edges.tolist()
-            y_age_rowdy = counts.tolist()
+            # x_age_rowdy = bin_edges.tolist()
+            # y_age_rowdy = counts.tolist()
+
+
+            fig_age_rowdy = px.histogram(dfr, x="Age", nbins=20, title="Age Distribution of Rowdy Setters",
+                                        color="Age")
+            fig_age_rowdy.update_layout(
+            xaxis_title="Age",
+            yaxis_title="Count",
+            bargap=0.1
+            )
+            plot_div_age_rowdy = fig_age_rowdy.to_html(full_html=False, include_plotlyjs='cdn')
+
+            # fig_age_rowdy.show()
+
+
 
             # RowdySetter Category
             x_rowdy_category = dfr['Rowdy_Category'].unique().tolist()
@@ -379,7 +394,7 @@ class CrimeAnalysisChart(View):
 
             # image_data1 = fig.to_image(format="png")
             # encoded_string1 = base64.b64encode(image_data1).decode('utf-8')
-            plot_div2 = plot_div21.to_html(full_html=False, include_plotlyjs='cdn')
+            plot_div_Sankey_MOB = plot_div21.to_html(full_html=False, include_plotlyjs='cdn')
 
 
             #Top 10 Occupation
@@ -388,8 +403,17 @@ class CrimeAnalysisChart(View):
             y_occupation = occupation_counts.values.tolist()
 
             #AGE vs Grading
-            x_values = dfm['Grading'].tolist()
-            y_values = dfm['AGE'].tolist()
+            # x_values = dfm['Grading'].tolist()
+            # y_values = dfm['AGE'].tolist()
+            x_categories = [0, 1, 2, 3, 99]
+            fig_grading_MOB = px.scatter(
+                dfm,
+                x='Grading',
+                y='AGE',
+                title='Correlation between Grading and Age',
+                category_orders={'Grading': x_categories}
+            )
+            plot_div_grading_MOB = fig_grading_MOB.to_html(full_html=False, include_plotlyjs='cdn')
 
 
             #Network Analysis
@@ -447,7 +471,7 @@ class CrimeAnalysisChart(View):
                 fig.add_trace(node_trace)
 
 
-            plot_div3 = fig.to_html(full_html=False, include_plotlyjs='cdn')
+            plot_div_network_MOB = fig.to_html(full_html=False, include_plotlyjs='cdn')
             # fig.show()
 
 
@@ -471,9 +495,9 @@ class CrimeAnalysisChart(View):
             labels_district_fir = grouped_df_district_fir[['District_Name', 'CrimeGroup_Name']].values.tolist()
             values_district_fir = grouped_df_district_fir['Count'].values.tolist()
 
-            # Victim Counts vs Accused Counts
-            victim_counts = dfk['VICTIM_COUNT'].tolist()
-            accused_counts = dfk['Accused_Count'].tolist()
+            # # Victim Counts vs Accused Counts
+            # victim_counts = dfk['VICTIM_COUNT'].tolist()
+            # accused_counts = dfk['Accused_Count'].tolist()
 
             # Top 5 Mean of Victim Count wrt CrimeGroup Name - Pie Plot
             grouped_df = dfk.groupby('CrimeGroup_Name')['VICTIM_COUNT'].mean()
@@ -563,7 +587,7 @@ class CrimeAnalysisChart(View):
             temp_dfc=dfc.dropna()
             df_filtered = temp_dfc[temp_dfc['Caste'] != 'N/A']
             fig_suburst_religion= px.sunburst(df_filtered, path=['Caste', 'Religion'], title='Caste and Religion Distribution')
-            plot_div31= fig_suburst_religion.to_html(full_html=False, include_plotlyjs='cdn') 
+            plot_div_suburst_religion= fig_suburst_religion.to_html(full_html=False, include_plotlyjs='cdn') 
             # # image_data1 = fig2.to_image(format="png")
     
 
@@ -572,26 +596,26 @@ class CrimeAnalysisChart(View):
             crime_count = dfc.groupby(['District_Name', 'UnitName'])['FIRNo'].count().reset_index()
             crime_count.columns = ['District_Name', 'UnitName', 'Count']
 
-            fig2 = px.treemap(crime_count, path=['District_Name', 'UnitName'], values='Count',
+            fig_fir_treemap = px.treemap(crime_count, path=['District_Name', 'UnitName'], values='Count',
                             color='Count', color_continuous_scale='Viridis',
                             title='Number of Crimes by District and Unit')
 
-            fig2.update_layout(
+            fig_fir_treemap.update_layout(
                 margin=dict(t=50, l=25, r=25, b=25),
                 font_family='Arial',
                 font_size=12
             )
-            plot_div4 = fig2.to_html(full_html=False, include_plotlyjs='cdn') 
+            plot_div_fir_treemap = fig_fir_treemap.to_html(full_html=False, include_plotlyjs='cdn') 
             # # fig2.show()
 
 
 
             #Victims Info Data
             
-            # Age Distribution of the Victims
-            hist_data = np.histogram(dfv['age'], bins=30)
-            labels_victims_age = hist_data[1] 
-            values_victims_age = hist_data[0]
+            # # Age Distribution of the Victims
+            # hist_data = np.histogram(dfv['age'], bins=30)
+            # labels_victims_age = hist_data[1] 
+            # values_victims_age = hist_data[0]
 
 
             # Profession wrt Age - Box Plot
@@ -599,9 +623,13 @@ class CrimeAnalysisChart(View):
             values__profession_age = dfv.groupby('Profession')['age'].apply(list).tolist()
 
             # Crime by Months - Recorded in the Victims Info - Bar Graph
-            crimes_v_month = dfv.groupby('Month')['Crime_No'].count().reset_index()
-            labels_crimes_v_month = crimes_v_month['Month'].tolist()
-            values_crimes_v_month = crimes_v_month['Crime_No'].tolist()
+            # crimes_v_month = dfv.groupby('Month')['Crime_No'].count().reset_index()
+            # labels_crimes_v_month = crimes_v_month['Month'].tolist()
+            # values_crimes_v_month = crimes_v_month['Crime_No'].tolist()
+
+            crimes_by_month = dfv.groupby('Month')['Crime_No'].count().reset_index()
+            fig_month_victims = px.bar(crimes_by_month, x='Month', y='Crime_No', title='Distribution of CrimeRates in Monthwisemanner', color='Month')
+            plot_div_month_victims = fig_month_victims.to_html(full_html=False, include_plotlyjs='cdn') 
 
             # Relation of Sex and Age - Voilon Chart
 
@@ -617,19 +645,26 @@ class CrimeAnalysisChart(View):
             filtered_df = dfv[(dfv['Profession'].notnull()) & (dfv['InjuryType'].notnull()) & (dfv['InjuryType'] != 'N/A')]
             crimes_by_prof_injury = filtered_df.groupby(['Profession', 'InjuryType'])['Crime_No'].count().reset_index()
             top_20 = crimes_by_prof_injury.sort_values('Crime_No', ascending=False).head(20)
-            fig3 = px.bar_polar(top_20, r='Crime_No', theta='Profession', color='InjuryType', title='Top 20 Combinations of Profession and Injury Type by Crime Count (Excluding N/A)')
-            plot_div5 = fig3.to_html(full_html=False, include_plotlyjs='cdn') 
+            fig_radar_profession = px.bar_polar(top_20, r='Crime_No', theta='Profession', color='InjuryType', title='Top 20 Combinations of Profession and Injury Type by Crime Count (Excluding N/A)')
+            plot_div_radar_profession = fig_radar_profession.to_html(full_html=False, include_plotlyjs='cdn') 
             # fig3.show()
 
 
             # Victim Distribution by Age Groups - Funnel Chart
 
+            # age_bins = [0, 18, 30, 45, 60, 100]
+            # age_labels = ['<18', '18-30', '30-45', '45-60', '60+']
+            # dfv['age_group'] = pd.cut(dfv['age'], bins=age_bins, labels=age_labels)
+            # victim_dist = dfv.groupby('age_group')['Victim_ID'].count().reset_index()
+            # victims_age = victim_dist['age_group'].tolist()
+            # victims_value = victim_dist['Victim_ID'].tolist()
             age_bins = [0, 18, 30, 45, 60, 100]
             age_labels = ['<18', '18-30', '30-45', '45-60', '60+']
             dfv['age_group'] = pd.cut(dfv['age'], bins=age_bins, labels=age_labels)
             victim_dist = dfv.groupby('age_group')['Victim_ID'].count().reset_index()
-            labels = victim_dist['age_group'].tolist()
-            values = victim_dist['Victim_ID'].tolist()
+            fig_age_victims = px.funnel(victim_dist, x='Victim_ID', y='age_group', title='Victim Distribution by Age Groups')
+            plot_div_age_victims = fig_age_victims.to_html(full_html=False, include_plotlyjs='cdn') 
+
 
             # Last two plots are meant to be plot on the geojson or Folium chart
             # Crimes by State - Chloropleth Plot Data
@@ -668,12 +703,12 @@ class CrimeAnalysisChart(View):
                 
                 },
                                 
-                {
-                'title': 'Age Distribution of the RowdyShetters',
-                'dataX': y_age_rowdy,
-                'dataY': x_age_rowdy,
-                'chartType': 'bar'
-                },                
+                # {
+                # 'title': 'Age Distribution of the RowdyShetters',
+                # 'dataX': y_age_rowdy,
+                # 'dataY': x_age_rowdy,
+                # 'chartType': 'bar'
+                # },                
                 {
                 'title': 'Category Count of Rowdy Shetter',
                 'dataX': y_rowdy_category,
@@ -722,12 +757,12 @@ class CrimeAnalysisChart(View):
                 'dataY': x_occupation,
                 'chartType': 'bar'
                 },
-                {
-                'title': 'Relation betwee the Age and the Grading',
-                'dataX': y_values,
-                'dataY': x_values,
-                'chartType': 'bar'
-                },
+                # {
+                # 'title': 'Relation betwee the Age and the Grading',
+                # 'dataX': y_values,
+                # 'dataY': x_values,
+                # 'chartType': 'bar'
+                # },
                 # {
                 # 'title': 'Sankey Chart - MOBs Class 1 and Cass 2',
                 # 'dataX': encoded_string1,
@@ -737,12 +772,12 @@ class CrimeAnalysisChart(View):
                 # 'dataX': encoded_string2,
                 # },
                 
-                {
-                'title': 'Distribution of the Crime Rates in Month wisemanner',
-                'dataX': labels_monthly_crimes,
-                'dataY': values_monthly_crimes,
-                'chartType': 'bar'
-                },
+                # {
+                # 'title': 'Distribution of the Crime Rates in Month wisemanner',
+                # 'dataX': labels_monthly_crimes,
+                # 'dataY': values_monthly_crimes,
+                # 'chartType': 'bar'
+                # },
                 {
                 'title': 'Various Crimes at different District',
                 'dataX': values_district_fir,
@@ -750,17 +785,23 @@ class CrimeAnalysisChart(View):
                 'chartType': 'bar'
                 },
 
-                {
-                'title': 'Victim Counts vs Accused Counts',
-                'dataX': accused_counts,
-                'dataY': victim_counts,
-                'chartType': 'bar'
-                },
+                # {
+                # 'title': 'Victim Counts vs Accused Counts',
+                # 'dataX': accused_counts,
+                # 'dataY': victim_counts,
+                # 'chartType': 'bar'
+                # },
+                #                 {
+                # 'title': 'Victim Distribution by Age',
+                # 'dataX': victims_age,
+                # 'dataY': victims_value,
+                # 'chartType': 'bar'
+                # },
                 {
                 'title': 'Top 5 Mean of Victim Count wrt CrimeGroup Name - Pie Plot',
                 'dataX': Y_top_5_crime_groups,
                 'dataY': X_top_5_crime_groups,
-                'chartType': 'pie'
+                'chartType': 'bar'
                 },
 
                 {
@@ -809,12 +850,15 @@ class CrimeAnalysisChart(View):
                 'type_count2':type_count2,
                 'type_count3':type_count3,
                 'type_count4':type_count4,
-                'image1':plot_div,
-                'image2':plot_div2,
-                'image3':plot_div3,
-                'image31':plot_div31,
-                'image4':plot_div4,
-                'image5':plot_div5,
+                'image00':plot_div_age_rowdy,
+                'image2':plot_div_Sankey_MOB,
+                'image3':plot_div_network_MOB,
+                'image31':plot_div_suburst_religion,
+                'image32':plot_div_grading_MOB,
+                'image4':plot_div_fir_treemap,
+                'image5':plot_div_radar_profession,
+                'image6':plot_div_month_victims,
+                'image7':plot_div_age_victims,
 
                 # 'x_age_rowdy':x_age_rowdy,
                 # 'x_rowdy_category':x_rowdy_category,
