@@ -2,7 +2,6 @@
 {% load static %}
 {% block title %} Crime Analysis {% endblock %}
 {% block cssblock %}
-<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 
 <style>
@@ -113,30 +112,7 @@
 
         <div class="tab-pane fade show active" id="home-tab-pane" role="tabpanel" aria-labelledby="home-tab" tabindex="0">
             <div class="container" data-aos="fade-up">
-                <div class="row g-0">
-                    <div class="col-lg-12 mt-4">
-                        <div class="input-group input-group">
-                            <div class="input-group-prepend">
-                                <label class="input-group-text rounded-0" for="inputGroupSelect01">Please Select Option</label>
-                            </div>
-                            <select id="select" class="form-select form-select-sm" aria-label=".form-select-sm example" onchange="selectFun();">
-                                <option selected>All Crime Data</option>
-                                {% comment %} <option value="1">Most Type of crime recorded</option>
-                                <option value="2">Location with most number of crimes are recorded</option>
-                                <option value="3">Type of crime in which most number of arrest is done</option>
-                                <option value="4">On which of day of week, the more crime is recorded</option>
-                                <option value="5">In which month, most no. of crime is recorded</option> {% endcomment %}
-                                {% for q in questions %}
-                                <option value="{{forloop.counter}}">{{q.title}}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                    </div>
-    
-                    <div class="col-lg-12 mb-4" data-aos="fade-up" id="chartdiv">
-                        <!-- <canvas id="myChart" height="100px"></canvas> -->
-                    </div>
-    
+                <div class="row" id="chartdiv">
                 </div>
             </div>
         </div>
@@ -202,62 +178,65 @@
     </section>
 
 </main><!-- End #main -->
-<script>
-     {% for q in questions %}
-    var ctrdiv = document.getElementById('chartdiv');
-    var canvas{{forloop.counter}} = document.createElement('canvas{{forloop.counter}}');
-    canvas{{forloop.counter}}.id = "myChart{{forloop.counter}}";
-    canvas{{forloop.counter}}.width = 400;
-    canvas{{forloop.counter}}.height = 400;
-    ctrdiv.appendChild(canvas{{forloop.counter}});
-    {% endfor %}
+
+<script type="text/javascript">
+    var received_data = "{{ questions | safe }}";
 </script>
 <script>
-    {% for q in questions %}  
-    let data{{forloop.counter}} = {
-            labels: {{ q.dataY | safe }},
+    var ctrdiv = document.getElementById('chartdiv');
+    // for loop to create multiple canvas with id length of received data
+    for (let i = 0; i < {{size | safe }}; i++) {
+        var canvas = document.createElement('canvas');
+        canvas.id = "myChart" + i;
+        canvas.width = 400;
+        canvas.height = 200;
+        var div = document.createElement('div');
+        div.className = "col-lg-6";
+        div.appendChild(canvas);
+        ctrdiv.appendChild(div);
+
+    }
+
+</script>
+<script>
+  let data, config, myChart;
+
+{% for q in questions %}
+    // Update data and config inside the loop
+    data = {
+        labels: {{q.dataY| safe}},
         datasets: [{
-            // label: 'Crime Analysis {{ crime.startendDates|default:"2016-2024" }}',
-            data{{forloop.counter}}: {{ q.dataX | safe }},
+            data:{{q.dataX | safe}},
             backgroundColor: [
-            'rgb(255, 99, 132)',
-            'rgb(255, 159, 64)',
-            'rgb(255, 205, 86)',
-            'rgb(75, 192, 192)',
-            'rgb(54, 162, 235)',
-            'rgb(153, 102, 255)',
-        ],
-            backgroundColor: [
-            'rgba(255, 99, 132, 0.8)',
-            'rgba(255, 159, 64, 0.8)',
-            'rgba(255, 205, 86, 0.8)',
-            'rgba(75, 192, 192, 0.8)',
-            'rgba(54, 162, 235, 0.8)',
-            'rgba(153, 102, 255, 0.8)',
-        ],
+                'rgb(255, 99, 132)',
+                'rgb(255, 159, 64)',
+                'rgb(255, 205, 86)',
+                'rgb(75, 192, 192)',
+                'rgb(54, 162, 235)',
+                'rgb(153, 102, 255)',
+            ],
             borderWidth: 1
-            }]
-        };
+        }]
+    };
 
-        let config{{forloop.counter}} = {
-            type: 'bar',
-            data: data{{forloop.counter}},
-            options: {
-                scales: {
-                    y: {
-                        beginAtZero: true
-                    }
+    config = {
+        type: '{{q.chartType | safe}}',
+        data: data,
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
                 }
-            },
-        };
+            }
+        }
+    };
 
-        let myChart{{forloop.counter}} = new Chart(
-            document.getElementById(`myChart{{forloop.counter}}`),
-            config{{forloop.counter}}
-        );
-
-    {% endfor %}
-
+    // Render the chart inside the loop
+    myChart = new Chart(
+        document.getElementById("myChart{{ forloop.counter0 }}"),
+        config
+    );
+{% endfor %}
 </script>
 
 {% endblock content %}

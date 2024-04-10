@@ -812,12 +812,12 @@ class CrimeAnalysisChart(View):
                     # # 'dataY': labels_hourly_crimes
                     # # },
 
-                    {
-                    'title': 'Time Series Behavior of the Offence Recorded',
-                    'dataX': values_crime_trend,
-                    'dataY': labels_crime_trend,
-                    'chartType': 'line'
-                    },
+                    # {
+                    # 'title': 'Time Series Behavior of the Offence Recorded',
+                    # 'dataX': values_crime_trend,
+                    # 'dataY': labels_crime_trend,
+                    # 'chartType': 'line'
+                    # },
                     {
                     'title': 'Counts of FIR Type',
                     'dataX': values_fir_type,
@@ -857,6 +857,7 @@ class CrimeAnalysisChart(View):
                 #     'image7':plot_div_age_victims,
                 #     'questions':data,
                 # }
+                # data = json.dumps(data)
                 context = {
                     'crime':crime,
                     'dataX':dataX,
@@ -920,6 +921,7 @@ class CrimeAnalysisChart(View):
                     # 'values_fir_type':values_fir_type,
 
                     'questions':data,
+                    'size':len(data),
                     }
                 ChartTemp.append(context)
                 return render(request, 'CrimeAnalysis/chart.html', context)
