@@ -9,6 +9,7 @@ import plotly.express as px
 from langchain import OpenAI
 from django.views import View
 from dotenv import load_dotenv
+from langchain.chat_models import ChatOpenAI
 from datetime import datetime
 import matplotlib.pyplot as plt
 import plotly.graph_objects as go
@@ -51,8 +52,10 @@ class CrimeAnalysis(View):
         return redirect('/login')
 
     def agent_llm(self, rjdf):
-        llm = OpenAI(openai_api_key=os.getenv('OPENAI_API_KEY'))
-        return create_pandas_dataframe_agent(llm, rjdf, verbose=False)
+        llm = ChatOpenAI(
+        model_name='gpt-3.5-turbo-16k',
+        openai_api_key=os.getenv('OPENAI_API_KEY') )
+        return create_pandas_dataframe_agent(llm, rjdf, verbose=False, handle_parsing_errors=True)
 
     def query_llm(self, agent, query):
         prompt = (
@@ -94,7 +97,15 @@ class CrimeAnalysis(View):
         return response.__str__()
 
     def decode_response(self, response: str) -> dict:
-        return json.loads(response)
+        if response.startswith('{"'):
+            try:
+                return json.loads(response)
+            except json.JSONDecodeError:
+        
+                return {}
+        else:
+    
+            return {"answer": response}
  
     def post(self, request):
         if request.method == 'POST':
