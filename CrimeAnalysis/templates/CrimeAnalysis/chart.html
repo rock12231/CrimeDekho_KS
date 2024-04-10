@@ -94,139 +94,169 @@
     <!-- End Breadcrumbs -->
 
     
+    <ul class="nav nav-tabs pb-0 justify-content-center" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active fw-bold px-5 mx-1" id="home-tab" data-bs-toggle="tab" data-bs-target="#home-tab-pane" type="button"
+                role="tab" aria-controls="home-tab-pane" aria-selected="true" onclick="pageScroll()">FIR Chart</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link fw-bold px-5 mx-1" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile-tab-pane" type="button"
+                role="tab" aria-controls="profile-tab-pane" aria-selected="false" onclick="pageScroll()">Mobs Chart</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link fw-bold px-5 mx-1" id="contact-tab" data-bs-toggle="tab" data-bs-target="#contact-tab-pane" type="button"
+                role="tab" aria-controls="contact-tab-pane" aria-selected="false" onclick="pageScroll()">Other Chart</button>
+        </li>
+    </ul>
 
-    <section style="padding: 5px;" id="get-a-quote" class="get-a-quote mb-5">
-        <div class="container" data-aos="fade-up">
-            <div class="row g-0">
-                <div class="col-lg-12 mt-4">
-                    <div class="input-group input-group">
-                        <div class="input-group-prepend">
-                            <label class="input-group-text rounded-0" for="inputGroupSelect01">Please Select Option</label>
+    <div class="tab-content" id="myTabContent">
+
+        <div class="tab-pane fade show active" id="home-tab-pane" role="tabpanel" aria-labelledby="home-tab" tabindex="0">
+            <div class="container" data-aos="fade-up">
+                <div class="row g-0">
+                    <div class="col-lg-12 mt-4">
+                        <div class="input-group input-group">
+                            <div class="input-group-prepend">
+                                <label class="input-group-text rounded-0" for="inputGroupSelect01">Please Select Option</label>
+                            </div>
+                            <select id="select" class="form-select form-select-sm" aria-label=".form-select-sm example" onchange="selectFun();">
+                                <option selected>All Crime Data</option>
+                                {% comment %} <option value="1">Most Type of crime recorded</option>
+                                <option value="2">Location with most number of crimes are recorded</option>
+                                <option value="3">Type of crime in which most number of arrest is done</option>
+                                <option value="4">On which of day of week, the more crime is recorded</option>
+                                <option value="5">In which month, most no. of crime is recorded</option> {% endcomment %}
+                                {% for q in questions %}
+                                <option value="{{forloop.counter}}">{{q.title}}</option>
+                                {% endfor %}
+                            </select>
                         </div>
-                        <select id="select" class="form-select form-select-sm" aria-label=".form-select-sm example" onchange="selectFun();">
-                            <option selected>All Crime Data</option>
-                            {% comment %} <option value="1">Most Type of crime recorded</option>
-                            <option value="2">Location with most number of crimes are recorded</option>
-                            <option value="3">Type of crime in which most number of arrest is done</option>
-                            <option value="4">On which of day of week, the more crime is recorded</option>
-                            <option value="5">In which month, most no. of crime is recorded</option> {% endcomment %}
-                            {% for q in questions %}
-                            <option value="{{forloop.counter}}">{{q.title}}</option>
-                            {% endfor %}
-                        </select>
                     </div>
+    
+                    <div class="col-lg-12 mb-4" data-aos="fade-up" id="chartdiv">
+                        <!-- <canvas id="myChart" height="100px"></canvas> -->
+                    </div>
+    
                 </div>
-
-                <div class="col-lg-12 mb-4" data-aos="fade-up" id="chartdiv">
-                    <canvas id="myChart" height="100px"></canvas>
-                </div>
-
             </div>
         </div>
-        <div>
-            {% autoescape off %}
-            {{ image00 }}
-            {% endautoescape %}
 
-            <!-- {% autoescape off %}
-            {{ image1 }}
-            {% endautoescape %} -->
-
-            {% autoescape off %}
-            {{ image2 }}
-            {% endautoescape %}
-
-            {% autoescape off %}
-            {{ image3 }}
-            {% endautoescape %}
-
-            {% autoescape off %}
-            {{ image31 }}
-            {% endautoescape %}
-
-            {% autoescape off %}
-            {{ image32 }}
-            {% endautoescape %}
-
-            {% autoescape off %}
-            {{ image4 }}
-            {% endautoescape %}
-
-            {% autoescape off %}
-            {{ image5 }}
-            {% endautoescape %}
-
-            
-            {% autoescape off %}
-            {{ image7 }}
-            {% endautoescape %}
-
-            {% autoescape off %}
-            {{ image6 }}
-            {% endautoescape %}
+        <div class="tab-pane fade" id="profile-tab-pane" role="tabpanel" aria-labelledby="profile-tab" tabindex="0">
+            <div class="col-lg-12 mt-4">
+                    {{ image2 | safe }}
+            </div>
+            <div class="row">
+                <div class="col-lg-6 mt-4">
+                        <center>
+                            {{ image31| safe }}
+                        </center>
+                </div>
+                <div class="col-lg-6 mt-4">
+                        <center>
+                            {{ image5 | safe }}
+                        </center>
+                </div>
+            </div>
+            <div class="col-lg-12 mt-4">
+                    <center>
+                    {{ image2 | safe }}
+                </center>
+            </div>
+            <div class="col-lg-12 mt-4">
+                    <center>
+                        {{ image3 | safe }}
+                    </center>
+            </div>
+            <div class="col-lg-12 mt-4">
+                    <center>
+                        {{ image32 | safe }}
+                    </center>
+            </div>
+            <div class="col-lg-12 mt-4">
+                    <center>
+                        {{ image4 | safe }}
+                    </center>
+            </div>
+            <div class="col-lg-12 mt-4">
+                    <center>
+                        {{ image7 | safe }}
+                    </center>
+            </div>
+            <div class="col-lg-12 mt-4">
+                    <center>
+                        {{ image6 | safe }}
+                    </center>
+            </div>
+                        
         </div>
+
+        <div class="tab-pane fade" id="contact-tab-pane" role="tabpanel" aria-labelledby="contact-tab" tabindex="0">
+           <div>Tab3</div>
+        </div>
+
+    </div>
+
+    <section style="padding: 5px;" id="get-a-quote" class="get-a-quote mb-5">
+       
+       
     </section>
 
 </main><!-- End #main -->
-
 <script>
+     {% for q in questions %}
+    var ctrdiv = document.getElementById('chartdiv');
+    var canvas{{forloop.counter}} = document.createElement('canvas{{forloop.counter}}');
+    canvas{{forloop.counter}}.id = "myChart{{forloop.counter}}";
+    canvas{{forloop.counter}}.width = 400;
+    canvas{{forloop.counter}}.height = 400;
+    ctrdiv.appendChild(canvas{{forloop.counter}});
+    {% endfor %}
+</script>
+<script>
+    {% for q in questions %}  
+    let data{{forloop.counter}} = {
+            labels: {{ q.dataY | safe }},
+        datasets: [{
+            // label: 'Crime Analysis {{ crime.startendDates|default:"2016-2024" }}',
+            data{{forloop.counter}}: {{ q.dataX | safe }},
+            backgroundColor: [
+            'rgb(255, 99, 132)',
+            'rgb(255, 159, 64)',
+            'rgb(255, 205, 86)',
+            'rgb(75, 192, 192)',
+            'rgb(54, 162, 235)',
+            'rgb(153, 102, 255)',
+        ],
+            backgroundColor: [
+            'rgba(255, 99, 132, 0.8)',
+            'rgba(255, 159, 64, 0.8)',
+            'rgba(255, 205, 86, 0.8)',
+            'rgba(75, 192, 192, 0.8)',
+            'rgba(54, 162, 235, 0.8)',
+            'rgba(153, 102, 255, 0.8)',
+        ],
+            borderWidth: 1
+            }]
+        };
 
-    function selectFun() {
-        var select = document.getElementById("select");
-        var selectValue = select.value;
-        console.log(select, "selectValue");
-        {% for q in questions %}
-        if (selectValue == "{{forloop.counter}}") {
-            myChart.data.labels = {{ q.dataY | safe }};
-            myChart.data.datasets[0].data = {{ q.dataX | safe }};
-            myChart.config.type = '{{ q.chartType }}';
-            myChart.update();
-          }
-        {% endfor %}
-  }
-
-    //Bar myChart Data
-    const data = {
-        labels: {{ dataY | safe }} ,
-    datasets: [{
-        label: 'Crime Analysis {{ crime.startendDates|default:"2016-2024" }}',
-        data: {{ dataX | safe }},
-        backgroundColor: [
-        'rgb(255, 99, 132)',
-        'rgb(255, 159, 64)',
-        'rgb(255, 205, 86)',
-        'rgb(75, 192, 192)',
-        'rgb(54, 162, 235)',
-        'rgb(153, 102, 255)',
-    ],
-        backgroundColor: [
-        'rgba(255, 99, 132, 0.8)',
-        'rgba(255, 159, 64, 0.8)',
-        'rgba(255, 205, 86, 0.8)',
-        'rgba(75, 192, 192, 0.8)',
-        'rgba(54, 162, 235, 0.8)',
-        'rgba(153, 102, 255, 0.8)',
-    ],
-        borderWidth: 1
-          }]
-      };
-
-    const config = {
-        type: 'bar',
-        data: data,
-        options: {
-            scales: {
-                y: {
-                    beginAtZero: true
+        let config{{forloop.counter}} = {
+            type: 'bar',
+            data: data{{forloop.counter}},
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
                 }
-            }
-        },
-    };
+            },
+        };
 
-    const myChart = new Chart(
-        document.getElementById('myChart'),
-        config
-    );
+        let myChart{{forloop.counter}} = new Chart(
+            document.getElementById(`myChart{{forloop.counter}}`),
+            config{{forloop.counter}}
+        );
+
+    {% endfor %}
 
 </script>
 

@@ -108,7 +108,9 @@ DATABASES = {
     },
     'custom_db': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'custom_db.sqlite3',
+        # location of db inside DB folder in base directory
+        'NAME': BASE_DIR / 'DB/custom_db.sqlite3',
+        # 'NAME': BASE_DIR / 'custom_db.sqlite3',
     }
 }
 
