@@ -121,49 +121,37 @@ class CrimeAnalysis(View):
 
 
 class CrimeAnalysisTable(View):
-    
+
     def get(self, request):
         if request.user.is_authenticated:
-            # get only 100 records
-            # rjdf = pd.DataFrame(FirData.objects.all().values())
-            if tempTable is None or len(tempTable) == 0:
-                rjdf = pd.DataFrame(Fir_Karnataka.objects.all().values()[0:100000])
-                # rjdf_2 = pd.DataFrame(Fir_Karnataka.objects.all().values()[20000:40000])
-                # print("================")
-                # rjdf_3 = pd.DataFrame(Fir_Karnataka.objects.all().values()[40000:60000])
-                # print("================")
-                # rjdf_4 = pd.DataFrame(Fir_Karnataka.objects.all().values()[80000:100000])
-                # print("================")
-                # rjdf_5 = pd.DataFrame(Fir_Karnataka.objects.all().values()[100000:120000])
-                # print("================")
-                # rjdf=pd.concat([rjdf_1, rjdf_2, rjdf_3, rjdf_4, rjdf_5], ignore_index=True)
-                print("+++++++++++++++++")
+            # if tempTable is None or len(tempTable) == 0:
+                rjdf = Fir_Karnataka.objects.all().values()
                 # Paginate the data
-                paginator = Paginator(rjdf, 100000)  # Show 10 records per page
+                count = rjdf.count()
+                paginator = Paginator(rjdf, 10000)  # Show 1000 records per page
                 page_number = request.GET.get('page')
                 page_obj = paginator.get_page(page_number)
-                data_dict = page_obj.object_list.to_dict('records')
-
+                data_dict = list(page_obj)
                 JSONdata = json.dumps(data_dict, ensure_ascii=False)
                 tempTable.append(JSONdata)
                 # Pass the JSON data and pagination information to the template
-                return render(request, 'CrimeAnalysis/table.html', {'JSONdata': JSONdata, 'page_obj': page_obj})
-            else:
-                return render(request, 'CrimeAnalysis/table.html', {'JSONdata': tempTable[0]})
+                return render(request, 'CrimeAnalysis/table.html', {'JSONdata': JSONdata, 'page_obj': page_obj, 'count': count})
+            # else:
+                # return render(request, 'CrimeAnalysis/table.html', {'JSONdata': tempTable[0]})
         return redirect('/login')
     
     # Add this method to handle AJAX requests from DataTables
-    # def post(self, request):
-    #     if request.user.is_authenticated:
-    #         rjdf = pd.DataFrame(FirData.objects.all().values())
-    #         paginator = Paginator(rjdf, 10)
-    #         page_number = request.POST.get('page')
-    #         page_obj = paginator.get_page(page_number)
-    #         data_dict = page_obj.object_list.to_dict('records')
-
-    #         JSONdata = json.dumps(data_dict, ensure_ascii=False)
-    #         return JsonResponse({'data': data_dict, 'draw': request.POST.get('draw'), 'recordsTotal': paginator.count, 'recordsFiltered': paginator.count, 'JSONdata': JSONdata})
-    #     return redirect('/login')
+    def post(self, request):
+        if request.user.is_authenticated:
+            rjdf = Fir_Karnataka.objects.all().values()
+            count = rjdf.count()
+            paginator = Paginator(rjdf, 10000)
+            page_number = request.POST.get('page')
+            page_obj = paginator.get_page(page_number)
+            data_dict = list(page_obj)
+            JSONdata = json.dumps(data_dict, ensure_ascii=False)
+            return JsonResponse({'data': data_dict, 'draw': request.POST.get('draw'), 'recordsTotal': paginator.count, 'recordsFiltered': paginator.count, 'JSONdata': JSONdata, 'count': count})
+        return redirect('/login')
         
 
 class CrimeAnalysisChart(View):
@@ -400,7 +388,7 @@ class CrimeAnalysisChart(View):
 
                 # image_data1 = fig.to_image(format="png")
                 # encoded_string1 = base64.b64encode(image_data1).decode('utf-8')
-                plot_div21.update_layout(autosize=True)
+                # plot_div21.update_layout(autosize=True, height=500)
                 plot_div_Sankey_MOB = plot_div21.to_html(full_html=False, include_plotlyjs='cdn')
 
 
@@ -823,12 +811,12 @@ class CrimeAnalysisChart(View):
                     # # 'dataY': labels_hourly_crimes
                     # # },
 
-                    # {
-                    # 'title': 'Time Series Behavior of the Offence Recorded',
-                    # 'dataX': values_crime_trend,
-                    # 'dataY': labels_crime_trend,
-                    # 'chartType': 'line'
-                    # },
+                    {
+                    'title': 'Time Series Behavior of the Offence Recorded',
+                    'dataX': values_crime_trend,
+                    'dataY': labels_crime_trend,
+                    'chartType': 'line'
+                    },
                     {
                     'title': 'Counts of FIR Type',
                     'dataX': values_fir_type,

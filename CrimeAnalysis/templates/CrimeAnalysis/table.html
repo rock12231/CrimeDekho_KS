@@ -3,63 +3,11 @@
 {% block title %} Crime Analysis {% endblock %}
 {% block cssblock %}
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-
-<style>
-    #select:focus {
-        border-color: #ff80ff;
-        box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.075) inset, 0px 0px 8px rgba(255, 100, 255, 0.5);
-    }
-
-    .toolbar {
-        float: left;
-    }
-
-    .cust-btn {
-        position: absolute;
-        margin-left: 40%;
-        margin-top: 10px;
-        z-index: 1;
-        color: black;
-        background: white;
-        border: 1px solid;
-    }
-
-    .cust-btn:hover {
-        position: absolute;
-        margin-left: 40%;
-        margin-top: 10px;
-        z-index: 1;
-        color: black;
-        background: #f4f4f4;
-        border: 1px solid;
-    }
-
-    .cust-btn:focus {
-        position: absolute;
-        margin-left: 40%;
-        margin-top: 10px;
-        z-index: 1;
-        color: black;
-        background: #f4f4f4;
-        border: 1px solid;
-    }
-</style>
-<!-- Data Table -->
 <link rel="stylesheet" type="text/css" href="{% static 'assets/vendor/datatable/css/jquery.dataTables.css' %}">
-<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css">
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-<!-- https://code.jquery.com/jquery-3.5.1.js -->
-<script type="text/javascript" charset="utf8"
-    src="{% static 'assets/vendor/datatable/js/jquery.dataTables.js' %}"></script>
-<script type="text/javascript" src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
-<!-- Multi Select -->
-<link href="{% static 'assets/vendor/select2/css/select2.min.css' %}" rel="stylesheet" />
-<script src="{% static 'assets/vendor/select2//js/select2.min.js' %}"></script>
+<script type="text/javascript" charset="utf8" src="{% static 'assets/vendor/datatable/js/jquery.dataTables.js' %}"></script>
 {% endblock %}
 {% block content %}
-<!-- ======= Header ======= -->
 <main id="main">
-
     <!-- ======= Breadcrumbs ======= -->
     <div class="breadcrumbs">
         <div class="page-header d-flex align-items-center" style="background-image: url(' {% static "assets/img/crime_analysis.png" %}') ;">
@@ -90,11 +38,38 @@
     </div>
     <!-- End Breadcrumbs -->
 
- 
-
     <section style="padding: 5px;" id="get-a-quote" class="get-a-quote mb-5">
         <div class="container" data-aos="fade-up">
-            <div class="row g-0">            
+            <div class="row g-0">  
+                <div class="col-lg-12 mt-3">
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="input-group mb-3">
+                                <input type="text" class="form-control" placeholder="Search In All {{count}} Data" aria-label="Search In All 20,00,000 Data" aria-describedby="button-addon2">
+                                <button class="btn btn-outline-primary btn-sm" type="button" id="button-addon2">Search</button>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 d-flex justify-content-center">
+                            <div class="col-lg-8 pagination">
+                                <span class="step-links">
+                                    {% if page_obj.has_previous %}
+                                        <a href="?page=1">&laquo; First</a> &nbsp; &nbsp;
+                                        <a href="?page={{ page_obj.previous_page_number }}">Previous</a>
+                                    {% endif %}
+
+                                    <span class="current">
+                                        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+                                    </span>
+
+                                    {% if page_obj.has_next %}
+                                        <a href="?page={{ page_obj.next_page_number }}">Next</a> &nbsp; &nbsp;
+                                        <a href="?page={{ page_obj.paginator.num_pages }}">Last &raquo;</a>
+                                    {% endif %}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>          
                 <div class="col-lg-12 mt-2">
                     <div class="table-responsive">
                         <table id="exampleone" class="display" style="width:100%">
@@ -236,7 +211,7 @@
             tr.addClass('shown');
         }
     });
-    $("div.toolbar").html('<b>Crime Analysis {{ crime.startendDates|default:"2022-2023" }}</b>');
+    $("div.toolbar").html('<b>Crime Analysis Total Data {{ count|default:"None" }}</b>');
       });
 </script>
 
