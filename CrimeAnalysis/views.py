@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 import folium
 from folium import plugins
-import geopandas as gpd
+# import geopandas as gpd
 import networkx as nx
 import plotly.express as px
 from langchain import OpenAI

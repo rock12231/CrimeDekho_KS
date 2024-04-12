@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 # Register your models here.
-from CrimeMapping.models import Crimes2001, ContactUs, GraphData, PoliceStationList ,ukdata, UKPoliceStationList, FirData, RajPolice, PoliceStationJaipurList, FirKarnataka, VictimInfo, RowdyShetters, ComplainantsDetails, MOBDetails
+from CrimeMapping.models import Crimes2001, ContactUs, GraphData, PoliceStationList ,ukdata, UKPoliceStationList, FirData, RajPolice, PoliceStationJaipurList, FirKarnataka, VictimInfo, RowdyShetters, ComplainantsDetails, MOBDetails, PoliceDetails
 
 class Crime(admin.ModelAdmin):
     list_display = ('id','caseno', 'block', 'Type', 'Type_desc', 'Where', 'Arrest', 'Domestic', 'District', 'Community_area', 'Year', 'Latitude', 'Longitude', 'Date')
@@ -67,3 +67,9 @@ admin.site.register(MOBDetails, MOBDetailsAdmin)
 class ComplainantsDetailsAdmin(admin.ModelAdmin):
     list_display = ('District_Name', 'UnitName', 'FIRNo', 'Year', 'Month', 'ComplainantName', 'Relation', 'RelationshipName', 'DateOfBirth', 'Age', 'Sex', 'Nationality', 'Occupation', 'Address', 'City', 'State', 'Pincode', 'Caste', 'Religion', 'FIR_ID', 'Unit_ID', 'Complaint_ID')
 admin.site.register(ComplainantsDetails, ComplainantsDetailsAdmin)
+
+
+admin.site.register(PoliceDetails)
+
+
+

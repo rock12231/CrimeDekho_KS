@@ -348,6 +348,62 @@
     </div>
     {% endif %}
 
+    <div class="col-lg-12 text-center">
+        <!-- Button trigger modal -->
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#police">
+            <i class="fa-solid fa-user-group"></i> Police Patrolling
+        </button>
+    </div>
+    
+    <br>
+
+    <div class="modal" id="police">
+        <div class="modal-dialog ">
+            <div class="modal-content">
+                
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h4 class="modal-title">All Police Man</h4>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <form action="" method="POST" id="formThree">
+                    {% csrf_token %}
+                    <input type="hidden" name="form_type" value="formThree">
+                    <!-- Modal body -->
+                    <div class="modal-body">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Police Station</th>
+                                    <th>Rank</th>
+                                    <th>District</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for p in police %}
+                                <tr>
+                                    <td>{{p.PoliceName}}</td>
+                                    <td>{{p.PoliceStation}}</td>
+                                    <td>{{p.Rank}}</td>
+                                    <td>{{p.District_Name}}</td>
+                                    <td><input class="form-check-input" type="checkbox" name="name-{{p.id}}" id="check-{{p.id}}" value="{{p.id}}" aria-label="..."></td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- Modal footer -->
+                    <div class="modal-footer">
+                        <button type="button" id="close" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" id="printbtn" class="btn btn-danger">Search</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
 </main><!-- End #main -->
 
 <script>
@@ -394,7 +450,7 @@
     });
 
 </script>
-
+<!-- 
 <div class="container-btn">
     <button id="createDutyChartBtn" class="blue-btn">Create Duty Chart</button>
     <div id="dutyChartContainer" style="display: none;">
@@ -438,7 +494,7 @@
             nameInputsContainer.appendChild(input);
         }
     });
-</script>
+</script> -->
 
 
 {% endblock %}

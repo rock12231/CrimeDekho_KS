@@ -7,7 +7,7 @@ from django.views import View
 from folium.plugins import MiniMap
 from CrimeMapping.models import FirData
 from django.shortcuts import render, redirect 
-from CrimeMapping.models import Crimes2001, PoliceStationList, GraphData, PoliceStationJaipurList
+from CrimeMapping.models import Crimes2001, PoliceStationList, GraphData, PoliceStationJaipurList, PoliceDetails
 
 
 # Read data from csv file
@@ -68,7 +68,9 @@ class Crimemapping(View):
     
     def get(self, request):
         #DynamicAnalytics2(df)
-        if request.user.is_authenticated:    
+        if request.user.is_authenticated:
+            # get all data from PoliceDetail model
+            police = PoliceDetails.objects.all()
             tempDF = ukdf.copy()
             tempDF['Arrest'] = tempDF['Arrest'].map({True: 'True', False: 'False'})
             tempDF['Domestic'] = tempDF['Domestic'].map({True: 'True', False: 'False'})
@@ -88,6 +90,7 @@ class Crimemapping(View):
                 'map':getmap(),
                 'pstation':pstation,
                 'ipcs':ipcs,
+                'police' : police
                 }
             return render(request, 'CrimeMapping/crimemapping.html',context)
         return redirect('/login')
@@ -308,7 +311,19 @@ class Crimemapping(View):
                     }
                 return render(request, 'CrimeMapping/crimemapping.html', context)
 
-
+            if request.POST.get("form_type") == 'formThree':
+                print("formThree............................")
+                police = PoliceDetails.objects.all().values()
+                print(police)
+                list_of_police = []
+                print(request.POST.get("name-1"))
+                print(request.POST.get("name-2"))
+                for p in police:
+                    if request.POST.get(f"name-{p['id']}"):
+                        list_of_police.append(p)
+                print(list_of_police)
+                # Do whatever you want to do with the list_of_police list Hrishikesh
+                return redirect('/crime-mapping/')
 
 def mapping(tempDF, type11, c1, c2, Where, Type, Arrest, Domestic,startDate, endDate, map):
 

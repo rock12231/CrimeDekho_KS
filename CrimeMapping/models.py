@@ -289,3 +289,14 @@ class ComplainantsDetails(models.Model):
     FIR_ID = models.IntegerField(null=True)
     Unit_ID = models.IntegerField(null=True)
     Complaint_ID = models.IntegerField(null=True)
+
+
+
+class PoliceDetails(models.Model):
+    District_Name = models.CharField(max_length=255, null=True)
+    UnitName = models.CharField(max_length=255, null=True)
+    PoliceName = models.CharField(max_length=255, null=True)
+    Rank = models.CharField(max_length=255, null=True)
+    PoliceStation = models.CharField(max_length=255, null=True)
+    DateOfBirth = models.CharField(max_length=255, null=True)
+    Age = models.IntegerField(null=True)
