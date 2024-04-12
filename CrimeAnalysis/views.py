@@ -4,6 +4,9 @@ import json
 import base64
 import numpy as np
 import pandas as pd
+import folium
+from folium import plugins
+import geopandas as gpd
 import networkx as nx
 import plotly.express as px
 from langchain import OpenAI
@@ -155,6 +158,7 @@ class CrimeAnalysisTable(View):
         
 
 class CrimeAnalysisChart(View):
+
     
     def get(self, request):
         if request.user.is_authenticated:
@@ -345,8 +349,15 @@ class CrimeAnalysisChart(View):
                 gang_strength_gt_zero = sorted_dfm[sorted_dfm['Gang_Strength'] > 0]
 
                 # Convert the 'AGE' and 'Gang_Strength' columns to lists
-                x_age = gang_strength_gt_zero['AGE'].tolist()
-                y_strength = gang_strength_gt_zero['Gang_Strength'].tolist()
+                # x_age = gang_strength_gt_zero['AGE'].tolist()
+                # y_strength = gang_strength_gt_zero['Gang_Strength'].tolist()
+                gang_strength_gt_zero = dfm[dfm['Gang_Strength'] > 0]
+
+                fig_strength_gt_zero= px.scatter(gang_strength_gt_zero, x='AGE', y='Gang_Strength', color='Crime_Group1',
+                                title='Age vs Gang Strength (Gang_Strength > 0)',
+                                hover_data={'MOB_Number':True, 'MobOpenDate':True})
+                plot_div_strength_gt_zero = fig_strength_gt_zero.to_html(full_html=False, include_plotlyjs='cdn')
+         
 
 
                 # Top 6 Caste of MOBs
@@ -361,9 +372,16 @@ class CrimeAnalysisChart(View):
 
 
                 # Age vs Crime Head2
-                age_crime_type = dfm.groupby(['AGE', 'Crime_Head2']).size().reset_index().rename(columns={0: 'Count'})
-                x_crime_head2 = age_crime_type['AGE'].tolist()
-                y_crime_head2 = age_crime_type['Count'].tolist()
+                # age_crime_type = dfm.groupby(['AGE', 'Crime_Head2']).size().reset_index().rename(columns={0: 'Count'})
+                # x_crime_head2 = age_crime_type['AGE'].tolist()
+                # y_crime_head2 = age_crime_type['Count'].tolist()
+                tempdf_age_crime= dfm[dfm['AGE']>=10]
+                age_crime_type = tempdf_age_crime.groupby(['AGE', 'Crime_Head2']).size().reset_index().rename(columns={0: 'Count'})
+                fig_age_crime_type = px.scatter(age_crime_type, x='AGE', y='Count', color='Crime_Head2', title='Crime Count by Age and Crime Type')
+                # fig.show()
+                plot_div_age_crime_type = fig_age_crime_type.to_html(full_html=False, include_plotlyjs='cdn')
+
+
 
                 
                 # Sankey Chart - MOBs Class 1 and Cass 2
@@ -485,10 +503,14 @@ class CrimeAnalysisChart(View):
                 print("++++++++++++++++++++++++++++++++++++")
                 print("++++++++++++++++++++++++++++++++++++")
 
-                # Various Crimes at different District
-                grouped_df_district_fir = dfk.groupby(['District_Name', 'CrimeGroup_Name']).size().reset_index(name='Count')
-                labels_district_fir = grouped_df_district_fir[['District_Name', 'CrimeGroup_Name']].values.tolist()
-                values_district_fir = grouped_df_district_fir['Count'].values.tolist()
+                # # Various Crimes at different District
+                # grouped_df_district_fir = dfk.groupby(['District_Name', 'CrimeGroup_Name']).size().reset_index(name='Count')
+                # labels_district_fir = grouped_df_district_fir[['District_Name', 'CrimeGroup_Name']].values.tolist()
+                # values_district_fir = grouped_df_district_fir['Count'].values.tolist()
+
+                grouped_df_district = dfk.groupby(['District_Name', 'CrimeGroup_Name']).size().reset_index(name='Count')
+                fig_karnataka_district = px.bar(grouped_df_district, x='District_Name', y='Count', color='CrimeGroup_Name', title='Crime Distribution by District and Crime Group')
+                plot_div_karnataka_district= fig_karnataka_district.to_html(full_html=False) 
 
                 # # Victim Counts vs Accused Counts
                 # victim_counts = dfk['VICTIM_COUNT'].tolist()
@@ -661,12 +683,59 @@ class CrimeAnalysisChart(View):
                 plot_div_age_victims = fig_age_victims.to_html(full_html=False, include_plotlyjs='cdn') 
 
 
+                unique_crime_groups = dfm['Crime_Group1'].unique()
+                color_map = {group: i for i, group in enumerate(unique_crime_groups)}
+                colors = dfm['Crime_Group1'].map(color_map)
+
+                fig_unique_crime = go.Figure(data=[go.Scatter3d(
+                    x=dfm['AGE'],
+                    y=dfm['Gang_Strength'],
+                    z=dfm['Crime_Group1'],
+                    mode='markers',
+                    marker=dict(
+                        size=12,
+                        color=colors, # Use the color map to assign colors to each crime group
+                        colorscale='Viridis', # Choose a colorscale
+                        opacity=0.8
+                    )
+                )])
+
+                fig_unique_crime.update_layout(scene=dict(xaxis_title='Age', yaxis_title='Gang Strength', zaxis_title='Crime Group'))
+                plot_div_fig_unique_crime = fig_unique_crime.to_html(full_html=False, include_plotlyjs='cdn') 
+
+
                 # Last two plots are meant to be plot on the geojson or Folium chart
                 # Crimes by State - Chloropleth Plot Data
-                crimes_by_state = dfv.groupby('PresentState')['Crime_No'].count().reset_index()
+                # crimes_by_state = dfv.groupby('PresentState')['Crime_No'].count().reset_index()
 
-                # Crimes by City (Karnataka) - Folium Chart
-                crimes_by_city = dfv.groupby('PresentCity')['Crime_No'].count().reset_index()
+                # # Crimes by City (Karnataka) - Folium Chart
+                # crimes_by_city = dfv.groupby('PresentCity')['Crime_No'].count().reset_index()
+
+                # # url = "https://raw.githubusercontent.com/Subhash9325/GeoJson-Data-of-Indian-States/master/Indian_States"
+                # gdf = gpd.read_file('CrimeMapping/data/Indian_States.json')
+                # india_states = gdf.rename(columns={"NAME_1": "ST_NM"}).__geo_interface__
+                # crimes_by_state = dfv.groupby('PresentState')['Crime_No'].count().reset_index()
+                # fig_gpd = px.choropleth(
+                #     crimes_by_state,
+                #     locations="PresentState",
+                #     geojson=india_states,
+                #     featureidkey="properties.ST_NM",
+                #     locationmode="geojson-id",
+                #     color="Crime_No",
+                #     scope="asia",
+                #     title='Crime Distribution by State in India'
+                # )
+
+                # fig_gpd.update_geos(fitbounds="locations", visible=False)
+
+                # # fig.show()
+                # plot_div_gpd = fig_gpd.to_html(full_html=False, include_plotlyjs='cdn') 
+
+
+                tempDF_Prof = dfv[dfv['age'] <= 120]
+
+                fig_prof_comp = px.box(tempDF_Prof, x='Profession', y='age', title='Comparison of Age by Profession')
+                plot_div_prof_comp = fig_prof_comp.to_html(full_html=False, include_plotlyjs='cdn') 
 
 
 
@@ -722,12 +791,12 @@ class CrimeAnalysisChart(View):
                     'dataY': x_rowdy_units,
                     'chartType': 'bar'
                     },
-                    {
-                    'title': 'MOBs Age vs Gang Strength more than 0, Scatter Plot',
-                    'dataX': y_strength,
-                    'dataY': x_age,
-                    'chartType': 'scatter'
-                    },
+                    # {
+                    # 'title': 'MOBs Age vs Gang Strength more than 0, Scatter Plot',
+                    # 'dataX': y_strength,
+                    # 'dataY': x_age,
+                    # 'chartType': 'scatter'
+                    # },
                     {
                     'title': 'Top 6 Caste Recorded of MOBs',
                     'dataX': caste_values,
@@ -740,12 +809,12 @@ class CrimeAnalysisChart(View):
                     'dataY': x_crime_group,
                     'chartType': 'bar'
                     },
-                    {
-                    'title': 'Relation between the Age and Crime Head2',
-                    'dataX': y_crime_head2,
-                    'dataY': x_crime_head2,
-                    'chartType': 'bar'
-                    },
+                    # {
+                    # 'title': 'Relation between the Age and Crime Head2',
+                    # 'dataX': y_crime_head2,
+                    # 'dataY': x_crime_head2,
+                    # 'chartType': 'bar'
+                    # },
                     {
                     'title': 'Top 10 Occupation of Offenders Recorded in MOBs',
                     'dataX': y_occupation,
@@ -773,12 +842,12 @@ class CrimeAnalysisChart(View):
                     # 'dataY': values_monthly_crimes,
                     # 'chartType': 'bar'
                     # },
-                    {
-                    'title': 'Various Crimes at different District',
-                    'dataX': values_district_fir,
-                    'dataY': labels_district_fir,
-                    'chartType': 'bar'
-                    },
+                    # {
+                    # 'title': 'Various Crimes at different District',
+                    # 'dataX': values_district_fir,
+                    # 'dataY': labels_district_fir,
+                    # 'chartType': 'bar'
+                    # },
 
                     # {
                     # 'title': 'Victim Counts vs Accused Counts',
@@ -811,12 +880,12 @@ class CrimeAnalysisChart(View):
                     # # 'dataY': labels_hourly_crimes
                     # # },
 
-                    {
-                    'title': 'Time Series Behavior of the Offence Recorded',
-                    'dataX': values_crime_trend,
-                    'dataY': labels_crime_trend,
-                    'chartType': 'line'
-                    },
+                    # {
+                    # 'title': 'Time Series Behavior of the Offence Recorded',
+                    # 'dataX': values_crime_trend,
+                    # 'dataY': labels_crime_trend,
+                    # 'chartType': 'line'
+                    # },
                     {
                     'title': 'Counts of FIR Type',
                     'dataX': values_fir_type,
@@ -869,6 +938,10 @@ class CrimeAnalysisChart(View):
                     'type_count2':type_count2,
                     'type_count3':type_count3,
                     'type_count4':type_count4,
+                    'image001':plot_div_karnataka_district,
+                    'image002': plot_div_age_crime_type,
+                    'image003':plot_div_strength_gt_zero,
+                    'image004':plot_div_fig_unique_crime,
                     'image00':plot_div_age_rowdy,
                     'image2':plot_div_Sankey_MOB,
                     'image3':plot_div_network_MOB,
@@ -878,6 +951,9 @@ class CrimeAnalysisChart(View):
                     'image5':plot_div_radar_profession,
                     'image6':plot_div_month_victims,
                     'image7':plot_div_age_victims,
+                    
+                    # 'image8': plot_div_gpd,
+                    'image9':plot_div_prof_comp,
 
                     # 'x_age_rowdy':x_age_rowdy,
                     # 'x_rowdy_category':x_rowdy_category,
@@ -955,41 +1031,6 @@ class CrimeAnalysisChart(View):
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    # def post(self, request):
-    #     if request.method == 'POST':
-    #         name = request.POST['name']
-    #         if name.find(' ') != -1:
-    #             first_name, Last_name = name.split(' ', 1)
-    #         else:
-    #             first_name = name
-    #             Last_name = name
-    #         email = request.POST['email']
-    #         subject = request.POST['subject']
-    #         message = request.POST['message']
-    #         objects = ContactUs()
-    #         data = ContactUs.objects.create(first_name=first_name, last_name=Last_name, User_email=email, User_subject=subject, User_message=message)
-    #         data.save()
-    #         alert = "Thankyou for contacting us! Our team will get back to you soon."
-    #         return render(request, 'CrimeMapping/index.html',{'alert':alert})
-    #     else:
-    #         alert = "Please fill the form again."
-    #     return render(request, 'CrimeMapping/index.html',{'alert':alert})
 
 
 
