@@ -319,7 +319,7 @@ class Crimemapping(View):
             if request.POST.get("form_type") == 'formThree':
 
                 police = PoliceDetails.objects.all().values()
-                crimes = [{'crime_id':1, 'longitude':'26', 'latitude':'75', 'risk_level':'High'},{'crime_id':2, 'longitude':'223', 'latitude':'1223', 'risk_level':'High'},{'crime_id':3, 'longitude':'312', 'latitude':'312', 'risk_level':'Medium'}]
+                crimes = [{'crime_id':1, 'longitude':'26', 'latitude':'75', 'risk_level':'High'},{'crime_id':2, 'longitude':'12.9716', 'latitude':'77.5946', 'risk_level':'High'},{'crime_id':3, 'longitude':'12.716', 'latitude':'77.6946', 'risk_level':'Medium'}]
                 for i in range(len(crimes)):
                     lat = crimes[i]['latitude']
                     long = crimes[i]['longitude']
