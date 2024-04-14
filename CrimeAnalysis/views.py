@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 import folium
 from folium import plugins
-# import geopandas as gpd
+import geopandas as gpd
 import networkx as nx
 import plotly.express as px
 from langchain import OpenAI
@@ -314,7 +314,7 @@ class CrimeAnalysisChart(View):
                                             color="Age")
                 fig_age_rowdy.update_layout(
                 xaxis_title="Age",
-                yaxis_title="Count",
+                yaxis_title="Count", 
                 bargap=0.1
                 )
                 plot_div_age_rowdy = fig_age_rowdy.to_html(full_html=False, include_plotlyjs='cdn')
@@ -356,6 +356,7 @@ class CrimeAnalysisChart(View):
                 fig_strength_gt_zero= px.scatter(gang_strength_gt_zero, x='AGE', y='Gang_Strength', color='Crime_Group1',
                                 title='Age vs Gang Strength (Gang_Strength > 0)',
                                 hover_data={'MOB_Number':True, 'MobOpenDate':True})
+
                 plot_div_strength_gt_zero = fig_strength_gt_zero.to_html(full_html=False, include_plotlyjs='cdn')
          
 
@@ -482,7 +483,6 @@ class CrimeAnalysisChart(View):
                 for edge in edges:
                     fig.add_trace(edge)
                     fig.add_trace(node_trace)
-
 
                 plot_div_network_MOB = fig.to_html(full_html=False, include_plotlyjs='cdn')
                 # fig.show()
@@ -712,24 +712,23 @@ class CrimeAnalysisChart(View):
                 # crimes_by_city = dfv.groupby('PresentCity')['Crime_No'].count().reset_index()
 
                 # # url = "https://raw.githubusercontent.com/Subhash9325/GeoJson-Data-of-Indian-States/master/Indian_States"
-                # gdf = gpd.read_file('CrimeMapping/data/Indian_States.json')
-                # india_states = gdf.rename(columns={"NAME_1": "ST_NM"}).__geo_interface__
-                # crimes_by_state = dfv.groupby('PresentState')['Crime_No'].count().reset_index()
-                # fig_gpd = px.choropleth(
-                #     crimes_by_state,
-                #     locations="PresentState",
-                #     geojson=india_states,
-                #     featureidkey="properties.ST_NM",
-                #     locationmode="geojson-id",
-                #     color="Crime_No",
-                #     scope="asia",
-                #     title='Crime Distribution by State in India'
-                # )
+                gdf = gpd.read_file('CrimeMapping/data/Indian_States.json')
+                india_states = gdf.rename(columns={"NAME_1": "ST_NM"}).__geo_interface__
+                crimes_by_state = dfv.groupby('PresentState')['Crime_No'].count().reset_index()
+                fig_gpd = px.choropleth(
+                    crimes_by_state,
+                    locations="PresentState",
+                    geojson=india_states,
+                    featureidkey="properties.ST_NM",
+                    locationmode="geojson-id",
+                    color="Crime_No",
+                    scope="asia",
+                    title='Crime Distribution by State in India'
+                )
 
-                # fig_gpd.update_geos(fitbounds="locations", visible=False)
-
-                # # fig.show()
-                # plot_div_gpd = fig_gpd.to_html(full_html=False, include_plotlyjs='cdn') 
+                fig_gpd.update_geos(fitbounds="locations", visible=False)
+                # fig.show()
+                plot_div_gpd = fig_gpd.to_html(full_html=False, include_plotlyjs='cdn') 
 
 
                 tempDF_Prof = dfv[dfv['age'] <= 120]
@@ -952,7 +951,7 @@ class CrimeAnalysisChart(View):
                     'image6':plot_div_month_victims,
                     'image7':plot_div_age_victims,
                     
-                    # 'image8': plot_div_gpd,
+                    'image8': plot_div_gpd,
                     'image9':plot_div_prof_comp,
 
                     # 'x_age_rowdy':x_age_rowdy,
