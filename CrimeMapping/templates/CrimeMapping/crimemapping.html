@@ -404,6 +404,34 @@
         </div>
     </div>
 
+    {% if allocation%}
+    <div>
+        <h2>Allocated Police</h2>
+        <table class="table table-bordered border-primary">
+            <thead>
+                <tr>
+                    <th>Beats</th>
+                    <th>Risk Level</th>
+                    <th>Police ID</th>
+                    <th>Police Name</th>
+                    <th>Location</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for p in allocation %}
+                <tr>
+                    <td>{{p.crime_id}}</td>
+                    <td>{{p.risk_level}}</td>
+                    <td>{{p.police_id}}</td>
+                    <td>{{p.police_officer}}</td>
+                    <td>{{p.location}}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+
 </main><!-- End #main -->
 
 <script>
