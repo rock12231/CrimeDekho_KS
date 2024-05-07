@@ -3,12 +3,16 @@ import json
 import folium 
 import numpy as np
 import pandas as pd
+from openai import OpenAI
 from django.views import View
 from folium.plugins import MiniMap
+from geopy.geocoders import Nominatim
 from CrimeMapping.models import FirData
 from django.shortcuts import render, redirect 
 from CrimeMapping.models import Crimes2001, PoliceStationList, GraphData, PoliceStationJaipurList, PoliceDetails
 
+# Initialize the Nominatim geolocator
+geolocator = Nominatim(user_agent="myapp")
 
 # Read data from csv file
 ukdf = pd.read_csv("CrimeMapping/data/UK-Dataset-Final.csv", on_bad_lines='skip' )
@@ -31,8 +35,10 @@ dfg = pd.DataFrame(GraphData.objects.all().values())
 jrjpdf= pd.DataFrame(PoliceStationJaipurList.objects.all().values())
 
 model_rjdf = pd.DataFrame(FirData.objects.all().values())
+
 # To add Open AI key here
 openai_api_key = os.getenv("OPENAI_API_KEY")
+client = OpenAI(api_key=openai_api_key)
 
 global img_url
 # img_url = staticfiles_storage.url('assets/img/policeman.png')
@@ -65,7 +71,6 @@ cards: dict={
 }
 
 class Crimemapping(View):
-    
     def get(self, request):
         #DynamicAnalytics2(df)
         if request.user.is_authenticated:
@@ -312,18 +317,61 @@ class Crimemapping(View):
                 return render(request, 'CrimeMapping/crimemapping.html', context)
 
             if request.POST.get("form_type") == 'formThree':
-                print("formThree............................")
+
                 police = PoliceDetails.objects.all().values()
-                print(police)
-                list_of_police = []
-                print(request.POST.get("name-1"))
-                print(request.POST.get("name-2"))
+                crimes = [{'crime_id':1, 'longitude':'26', 'latitude':'75', 'risk_level':'High'},{'crime_id':2, 'longitude':'12.9716', 'latitude':'77.5946', 'risk_level':'High'},{'crime_id':3, 'longitude':'12.716', 'latitude':'77.6946', 'risk_level':'Medium'}]
+                for i in range(len(crimes)):
+                    lat = crimes[i]['latitude']
+                    long = crimes[i]['longitude']
+                    try:
+                        location = geolocator.reverse([long, lat])
+                        crimes[i]['location'] = location.address      
+                    except Exception:
+                        crimes[i]['location'] = lat+long                                              
+                police_officers = []
                 for p in police:
                     if request.POST.get(f"name-{p['id']}"):
-                        list_of_police.append(p)
-                print(list_of_police)
-                # Do whatever you want to do with the list_of_police list Hrishikesh
-                return redirect('/crime-mapping/')
+                        police_officers.append({'police_id':p['id'], 'police_officer':p['PoliceName']})
+
+                prompt = f"""
+                    You have to assign given police_officers to crimes according to the risk_level. 
+                    If there are less police_officers try to allocate two or more nearest locations to same police_officers. 
+                    If there are more number of police_officers assign greater number of police_officers to crimes with higher risks.
+
+                    crimes - {crimes}
+
+                    police_officers - {police_officers}
+
+                    Don't return the code. Just return the assignments of police_officers to crimes in json format only.
+
+                    Example JSON Output to Strictly Follow -
+                    {{
+                        "assignments": [
+                            {{"crime_id":12, "location":"address", "risk_level":"High", "police_id":1, "police_officer":"anand"}},
+                            {{"crime_id":13, "location":"address", "risk_level":"Medium", "police_id":2, "police_officer":"nobita"}}
+                        ]
+                    }}
+                """
+
+                response = client.chat.completions.create(
+                    model="gpt-4",
+                    messages=[{"role": "system", "content": prompt}]
+                )
+                allocation_json = response.choices[0].message.content
+                context = {
+                    'crime':crime,
+                    'map':getmap(),
+                    'pstation':pstation,
+                    'ipcs':ipcs,
+                    'police':police
+                }
+                try:
+                    allocation = json.loads(allocation_json)
+                    context['allocation'] = allocation['assignments']
+                except Exception:
+                    pass
+                return render(request, 'CrimeMapping/crimemapping.html', context)
+
 
 def mapping(tempDF, type11, c1, c2, Where, Type, Arrest, Domestic,startDate, endDate, map):
 
