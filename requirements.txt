@@ -25,3 +25,5 @@ InstructorEmbedding
 torch
 sentence-transformers
 chromadb
+geopy
+geopandas
