@@ -156,6 +156,15 @@ document.addEventListener('DOMContentLoaded', () => {
  */
 
 
-function pageScroll() {
-  window.scrollTo(0, 160);
-}
+// function pageScroll() {
+//   window.scrollTo(0, 160);
+// }
+
+// function pageScrollPolice(){
+//   window.scrollTo(0, 450);
+// }
+
+
+// function pageScrollMap(){
+//   window.scrollTo(0, 160);
+// }

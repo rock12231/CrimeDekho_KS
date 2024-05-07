@@ -298,6 +298,23 @@ section {
   }
 }
 
+
+/* Login */
+.authenticate p{
+  color: #001f8d;
+}
+.login{
+  width: 20em;
+}
+.login div{
+  height: 60vh;
+}
+.login button{
+  background-color: #001f8d;
+  color: white;
+}
+
+
 /*--------------------------------------------------------------
 # Header
 --------------------------------------------------------------*/
